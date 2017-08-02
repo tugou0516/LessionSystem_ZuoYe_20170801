@@ -1,0 +1,12 @@
+DROP TABLE IF EXISTS `collection_table`;
+CREATE TABLE `collection_table` (
+  `Id` int(11) NOT NULL AUTO_INCREMENT,
+  `student_id` int(11) NOT NULL DEFAULT '0',
+  `choose_course_time` datetime DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
+  `course_id` int(11) NOT NULL DEFAULT '0',
+  `choose_status` varchar(20) NOT NULL DEFAULT '其它',
+  `attendance_status` varchar(30) NOT NULL DEFAULT '0' COMMENT '1代表上课2代表旷课3代表请假',
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+INSERT INTO test_student VALUES('1','2','2017-12-12 08:00:00','2017-10-12 12:00:00',1,'排队',2);

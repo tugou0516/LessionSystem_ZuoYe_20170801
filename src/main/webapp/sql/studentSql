@@ -1,0 +1,16 @@
+DROP TABLE IF EXISTS `test_student`;
+CREATE TABLE `test_student` (
+  `Id` int(11) NOT NULL AUTO_INCREMENT,
+  `login_name` varchar(30) NOT NULL DEFAULT '',
+  `password` varchar(30) NOT NULL DEFAULT '',
+  `name` varchar(30) NOT NULL DEFAULT '',
+  `gender` varchar(10) NOT NULL DEFAULT '',
+  `position` varchar(30) NOT NULL DEFAULT '',
+  `birthday` date DEFAULT NULL,
+  `tel` varchar(30) NOT NULL DEFAULT '0',
+  `email` varchar(30) NOT NULL DEFAULT '',
+  `score` double NOT NULL DEFAULT '0',
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+INSERT INTO test_student VALUES('1','校长','123456','校长','男','校长','2017-12-12','13402545214','9588@qq.com',100);
+
