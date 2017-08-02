@@ -1,0 +1,15 @@
+DROP TABLE IF EXISTS `test_course`;
+CREATE TABLE `test_course` (
+  `Id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL DEFAULT '',
+  `class_room` varchar(30) NOT NULL DEFAULT '',
+  `teacher` varchar(30) NOT NULL DEFAULT '',
+  `course_time` date NOT NULL,
+  `class_start_time` datetime NOT NULL,
+  `class_end_time` datetime NOT NULL,
+  `score` int(11) NOT NULL DEFAULT 10,
+  `class_rl` int(11) NOT NULL,
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+INSERT INTO test_course VALUES('1','黄忠','3号楼3层307','诸葛亮','2017-07-07','2017-12-12 08:00:00','2017-12-12 10:00:00','5','120'),('2','赵翔','11号楼5层505','刘备','2017-01-01','2017-01-08 08:00:00','2017-01-08 10:00:00','2','120'),('3','张飞','10号楼12层1214','曹操','2017-05-06','2017-05-12 08:00:00','2017-05-12 11:30:00','4','120'),('4','周瑜','4号楼6层606','雍正','2017-03-03','2017-03-10 08:00:00','2017-03-10 10:30:00','3','120'),('5','嬴政','9号楼8层816','妲己','2017-05-05','2017-05-12 13:00:00','2017-05-12 17:00:00','5','120');
