@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hibernate-configuration>
+	<session-factory>
+		<!-- 是否显示Hibernate生成的SQL语句，通常在开发阶段设置为true，在生产环境中设置为false -->
+		<property name="hibernate.show_sql">true</property>
+		<!-- 设置使用的数据库方言，此设置可以透明的切换数据库管理系统 -->
+		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+		<!-- JDBC的相关配置 -->
+		<property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+		<property name="hibernate.connection.url"><![CDATA[jdbc:mysql://localhost:3306/test?characterEncoding=utf8&useSSL=true&serverTimezone=UTC]]></property>
+		<property name="hibernate.connection.username">root</property>
+		<property name="hibernate.connection.password">123456</property>
+
+		<!-- 声明实体类，让Hibernate可以识别哪些类和后边的数据库表进行了映射 -->
+		<mapping class="org.forten.zuoye.model.Course" />
+		<mapping class="org.forten.zuoye.model.Student" />
+	</session-factory>
+</hibernate-configuration>
