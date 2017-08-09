@@ -1,16 +1,16 @@
-package org.forten.zuoye.dto;
+package org.forten.zuoye.dto.student;
 
-import org.forten.utils.common.DateUtil;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
 /**
- * Created by Administrator on 2017/8/8.
+ * Created by Administrator on 2017/8/7.
  */
-public class Student4ShowRo {
+public class StudentDto4Mybatis {
     private int id;
     private String loginName;
+    private String password;
     private String name;
     private String gender;
     private String position;
@@ -20,12 +20,13 @@ public class Student4ShowRo {
     private String email;
     private double score;
 
-    public Student4ShowRo() {
+    public StudentDto4Mybatis() {
     }
 
-    public Student4ShowRo(int id, String loginName, String name, String gender, String position, Date birthday, String tel, String email, double score) {
+    public StudentDto4Mybatis(int id, String loginName, String password, String name, String gender, String position, Date birthday, String tel, String email, double score) {
         this.id = id;
         this.loginName = loginName;
+        this.password = password;
         this.name = name;
         this.gender = gender;
         this.position = position;
@@ -49,6 +50,14 @@ public class Student4ShowRo {
 
     public void setLoginName(String loginName) {
         this.loginName = loginName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getName() {
@@ -77,9 +86,6 @@ public class Student4ShowRo {
 
     public Date getBirthday() {
         return birthday;
-    }
-    public String getBirthdayStr() {
-        return birthday == null ? "" : DateUtil.convertDateToString(birthday, "yyyy-MM-dd");
     }
 
     public void setBirthday(Date birthday) {
@@ -115,7 +121,7 @@ public class Student4ShowRo {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Student4ShowRo that = (Student4ShowRo) o;
+        StudentDto4Mybatis that = (StudentDto4Mybatis) o;
 
         return id == that.id;
     }
@@ -127,9 +133,10 @@ public class Student4ShowRo {
 
     @Override
     public String toString() {
-        return "Student4ShowRo{" +
+        return "StudentDto4Mybatis{" +
                 "id=" + id +
                 ", loginName='" + loginName + '\'' +
+                ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
                 ", gender='" + gender + '\'' +
                 ", position='" + position + '\'' +

@@ -1,8 +1,7 @@
-package org.forten.zuoye.dto;
+package org.forten.zuoye.dto.student;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Column;
 import java.util.Date;
 
 /**
