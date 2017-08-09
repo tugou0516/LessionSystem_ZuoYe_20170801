@@ -13,7 +13,10 @@
     <!-- 读取项目中特定位置上的属性文件 -->
     <!-- 一旦读取成功，就可以使用${属性名}方式得到属性的值 -->
     <context:property-placeholder location="classpath*:/system/*.properties" />
-    <!-- <context:component-scan base-package="org.forten"></context:component-scan> -->
+    <context:component-scan base-package="org.forten.zuoye.bo,org.forten.zuoye.dao">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Repository" />
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Service" />
+    </context:component-scan>
 
     <!-- 声明了一个C3P0中的数据库连接池类的Bean，这个Bean就是项目的数据源 -->
     <!-- destroy-method指定了当Bean被销毁时要执行的方法 -->
@@ -49,21 +52,20 @@
     </bean>
 
 	<!-- 声明MyBatis事务管理器 -->
-    <bean id="transactionManager1"
+    <!--<bean id="transactionManager2"
           class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource" />
-    </bean>
+    </bean>-->
 
     <!-- 声明Hibernate的SessionFactory Bean -->
-    <bean id="sessionFactory"
-          class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />
         <property name="hibernateProperties" ref="hibernateProperties" />
         <property name="packagesToScan" ref="packagesToScanList" />
     </bean>
 
     <!-- 声明Hibernate的事务管理器 -->
-    <bean id="transactionManager2"
+    <bean id="transactionManager"
           class="org.springframework.orm.hibernate5.HibernateTransactionManager">
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>

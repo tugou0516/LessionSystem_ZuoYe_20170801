@@ -1,44 +1,30 @@
-package org.forten.zuoye.model;
+package org.forten.zuoye.dto;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.util.Date;
 
 /**
- * Created by student1 on 2017/8/2.
+ * Created by Administrator on 2017/8/8.
  */
-@Entity
-@Table(name ="test_student")
-public class Student {
-    @Id
-    private int id;
-    @Column(name="login_name")
+public class Student4SaveDto {
+
     private String loginName;
-    @Column
     private String password;
-    @Column
     private String name;
-    @Column
     private String gender;
-    @Column
     private String position;
-    @Column
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date birthday;
-    @Column
     private String tel;
-    @Column
     private String email;
-    @Column
     private double score;
 
-    public Student() {
+    public Student4SaveDto() {
     }
 
-    public Student(String loginName, String password, String name, String gender, String position, Date birthday, String tel, String email, double score) {
+    public Student4SaveDto(String loginName, String password, String name, String gender, String position, Date birthday, String tel, String email, double score) {
         this.loginName = loginName;
         this.password = password;
         this.name = name;
@@ -48,14 +34,6 @@ public class Student {
         this.tel = tel;
         this.email = email;
         this.score = score;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getLoginName() {
@@ -131,25 +109,9 @@ public class Student {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Student student = (Student) o;
-
-        return id == student.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return id;
-    }
-
-    @Override
     public String toString() {
-        return "Student{" +
-                "id=" + id +
-                ", loginName='" + loginName + '\'' +
+        return "Student4SaveDto{" +
+                "loginName='" + loginName + '\'' +
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
                 ", gender='" + gender + '\'' +
@@ -161,3 +123,4 @@ public class Student {
                 '}';
     }
 }
+

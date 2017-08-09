@@ -1,46 +1,31 @@
-package org.forten.zuoye.model;
+package org.forten.zuoye.dto;
 
+import org.forten.utils.common.DateUtil;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.util.Date;
 
 /**
- * Created by student1 on 2017/8/2.
+ * Created by Administrator on 2017/8/8.
  */
-@Entity
-@Table(name ="test_student")
-public class Student {
-    @Id
+public class Student4ShowRo {
     private int id;
-    @Column(name="login_name")
     private String loginName;
-    @Column
-    private String password;
-    @Column
     private String name;
-    @Column
     private String gender;
-    @Column
     private String position;
-    @Column
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date birthday;
-    @Column
     private String tel;
-    @Column
     private String email;
-    @Column
     private double score;
 
-    public Student() {
+    public Student4ShowRo() {
     }
 
-    public Student(String loginName, String password, String name, String gender, String position, Date birthday, String tel, String email, double score) {
+    public Student4ShowRo(int id, String loginName, String name, String gender, String position, Date birthday, String tel, String email, double score) {
+        this.id = id;
         this.loginName = loginName;
-        this.password = password;
         this.name = name;
         this.gender = gender;
         this.position = position;
@@ -64,14 +49,6 @@ public class Student {
 
     public void setLoginName(String loginName) {
         this.loginName = loginName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getName() {
@@ -100,6 +77,9 @@ public class Student {
 
     public Date getBirthday() {
         return birthday;
+    }
+    public String getBirthdayStr() {
+        return birthday == null ? "" : DateUtil.convertDateToString(birthday, "yyyy-MM-dd");
     }
 
     public void setBirthday(Date birthday) {
@@ -135,9 +115,9 @@ public class Student {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Student student = (Student) o;
+        Student4ShowRo that = (Student4ShowRo) o;
 
-        return id == student.id;
+        return id == that.id;
     }
 
     @Override
@@ -147,10 +127,9 @@ public class Student {
 
     @Override
     public String toString() {
-        return "Student{" +
+        return "Student4ShowRo{" +
                 "id=" + id +
                 ", loginName='" + loginName + '\'' +
-                ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
                 ", gender='" + gender + '\'' +
                 ", position='" + position + '\'' +
