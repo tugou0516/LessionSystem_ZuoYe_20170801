@@ -19,7 +19,7 @@ public class Course {
     private int id;
     @Column
     private String name;
-    @Column
+    @Column(name="class_room")
     private String classRoom;
     @Column
     private String teacher;
