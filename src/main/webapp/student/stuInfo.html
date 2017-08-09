@@ -5,8 +5,10 @@
     <title>学员个人信息</title>
 </head>
 <body>
+
 <div id="stu-info">
-    <table border="1" :hidden="showFlag">
+    <button type="button" @click="change">个人信息</button>
+    <table border="1" :hidden="!showFlag">
         <tbody>
         <tr>
             <th>工号</th><td>{{stu.loginName}}</td>
@@ -34,36 +36,36 @@
         </tr>
         </tbody>
     </table>
-    <table border="1" :hidden="!showFlag">
-        <tbody>
-        <tr>
-            <th>工号</th><td><input v-model="stu.loginName"/></td>
-        </tr>
-        <tr>
-            <th>姓名</th><td><input v-model="stu.name"/></td>
-        </tr>
-        <tr>
-            <th>性别</th><td><input v-model="stu.gender"/></td>
-        </tr>
-        <tr>
-            <th>职位</th><td><input v-model="stu.position"/></td>
-        </tr>
-        <tr>
-            <th>生日</th><td><input v-model="stu.birthdayStr"/></td>
-        </tr>
-        <tr>
-            <th>联系方式</th><td><input v-model="stu.tel"/></td>
-        </tr>
-        <tr>
-            <th>E-mail</th><td><input v-model="stu.email"/></td>
-        </tr>
-        <tr>
-            <th>学分</th><td><input v-model="stu.score"/></td>
-        </tr>
-        </tbody>
-    </table>
-    <button :hidden="showFlag" @click="change">更新信息</button>
-    <button :hidden="!showFlag" @click="change">保存</button>
+    <!--<table border="1" :hidden="!showFlag">-->
+        <!--<tbody>-->
+        <!--<tr>-->
+            <!--<th>工号</th><td><input v-model="stu.loginName"/></td>-->
+        <!--</tr>-->
+        <!--<tr>-->
+            <!--<th>姓名</th><td><input v-model="stu.name"/></td>-->
+        <!--</tr>-->
+        <!--<tr>-->
+            <!--<th>性别</th><td><input v-model="stu.gender"/></td>-->
+        <!--</tr>-->
+        <!--<tr>-->
+            <!--<th>职位</th><td><input v-model="stu.position"/></td>-->
+        <!--</tr>-->
+        <!--<tr>-->
+            <!--<th>生日</th><td><input v-model="stu.birthdayStr"/></td>-->
+        <!--</tr>-->
+        <!--<tr>-->
+            <!--<th>联系方式</th><td><input v-model="stu.tel"/></td>-->
+        <!--</tr>-->
+        <!--<tr>-->
+            <!--<th>E-mail</th><td><input v-model="stu.email"/></td>-->
+        <!--</tr>-->
+        <!--<tr>-->
+            <!--<th>学分</th><td><input v-model="stu.score"/></td>-->
+        <!--</tr>-->
+        <!--</tbody>-->
+    <!--</table>-->
+    <!--<button type="button" :hidden="showFlag" @click="change">更新信息</button>-->
+    <!--<button type="button" :hidden="!showFlag" @click="change(),update()">保存</button>-->
 </div>
 <script src="../js/jquery-3.2.1.js"></script>
 <script src="../js/vue.js"></script>
@@ -95,13 +97,18 @@
             },
             update:function () {
                 axios({
-
-                })
+                    method:"POST",
+                    url:'update.do',
+                    data:this.stu
+                }).then((res)=>{
+                    alert(res.data.message);
+                }).catch(function (err) {
+                    console.log(err);
+                    alert(err.data.message);
+                });
             }
-
         }
     });
-
 </script>
 </body>
 </html>

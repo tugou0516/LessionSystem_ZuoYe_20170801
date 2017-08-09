@@ -13,8 +13,8 @@ public interface StudentMapper {
     @Results(id="studentMap",value={
             @Result(property="loginName",column="login_name")
     })
-    @Insert("INSERT INTO test_student (login_name,password,name,gender,position,birthday,tel,email,score) " +
-            "VALUES (#{loginName},#{password},#{name},#{gender},#{position},#{birthday},#{tel},#{email},#{score})")
+    @Insert("INSERT INTO test_student (login_name,password,name,gender,position,birthday,tel,email) " +
+            "VALUES (#{loginName},#{password},#{name},#{gender},#{position},#{birthday},#{tel},#{email})")
     @Options(useGeneratedKeys=true,keyProperty="id")
     int insert(Student stu);
 

@@ -19,12 +19,12 @@ public class Student4ShowRo {
     private Date birthday;
     private String tel;
     private String email;
-    private double score;
+
 
     public Student4ShowRo() {
     }
 
-    public Student4ShowRo(int id, String loginName, String password, String name, String gender, String position, Date birthday, String tel, String email, double score) {
+    public Student4ShowRo(int id, String loginName, String password, String name, String gender, String position, Date birthday, String tel, String email) {
         this.id = id;
         this.loginName = loginName;
         this.password = password;
@@ -34,7 +34,6 @@ public class Student4ShowRo {
         this.birthday = birthday;
         this.tel = tel;
         this.email = email;
-        this.score = score;
     }
 
     public String getPassword() {
@@ -112,13 +111,6 @@ public class Student4ShowRo {
         this.email = email;
     }
 
-    public double getScore() {
-        return score;
-    }
-
-    public void setScore(double score) {
-        this.score = score;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -140,13 +132,13 @@ public class Student4ShowRo {
         return "Student4ShowRo{" +
                 "id=" + id +
                 ", loginName='" + loginName + '\'' +
+                ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
                 ", gender='" + gender + '\'' +
                 ", position='" + position + '\'' +
                 ", birthday=" + birthday +
                 ", tel='" + tel + '\'' +
                 ", email='" + email + '\'' +
-                ", score=" + score +
                 '}';
     }
 }

@@ -1113,7 +1113,7 @@ function mergeDataOrFn (
   vm
 ) {
   if (!vm) {
-    // in a Vue.extend merge, both should be functions
+    // in a Vue.common merge, both should be functions
     if (!childVal) {
       return parentVal
     }
@@ -3117,7 +3117,7 @@ function initProps (vm, propsOptions) {
       });
     }
     // static props are already proxied on the component's prototype
-    // during Vue.extend(). We only need to proxy props defined at
+    // during Vue.common(). We only need to proxy props defined at
     // instantiation here.
     if (!(key in vm)) {
       proxy(vm, "_props", key);
@@ -4228,7 +4228,7 @@ function resolveConstructorOptions (Ctor) {
       Ctor.superOptions = superOptions;
       // check if there are any late-modified/attached options (#4976)
       var modifiedOptions = resolveModifiedOptions(Ctor);
-      // update base extend options
+      // update base common options
       if (modifiedOptions) {
         extend(Ctor.extendOptions, modifiedOptions);
       }
@@ -4592,7 +4592,7 @@ function initGlobalAPI (Vue) {
     Vue.options[type + 's'] = Object.create(null);
   });
 
-  // this is used to identify the "base" constructor to extend all plain-object
+  // this is used to identify the "base" constructor to common all plain-object
   // components with in Weex's multi-instance scenarios.
   Vue.options._base = Vue;
 

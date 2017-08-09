@@ -32,13 +32,11 @@ public class Student {
     private String tel;
     @Column
     private String email;
-    @Column
-    private double score;
 
     public Student() {
     }
 
-    public Student(String loginName, String password, String name, String gender, String position, Date birthday, String tel, String email, double score) {
+    public Student(String loginName, String password, String name, String gender, String position, Date birthday, String tel, String email) {
         this.loginName = loginName;
         this.password = password;
         this.name = name;
@@ -47,7 +45,6 @@ public class Student {
         this.birthday = birthday;
         this.tel = tel;
         this.email = email;
-        this.score = score;
     }
 
     public int getId() {
@@ -122,13 +119,6 @@ public class Student {
         this.email = email;
     }
 
-    public double getScore() {
-        return score;
-    }
-
-    public void setScore(double score) {
-        this.score = score;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -157,7 +147,6 @@ public class Student {
                 ", birthday=" + birthday +
                 ", tel='" + tel + '\'' +
                 ", email='" + email + '\'' +
-                ", score=" + score +
                 '}';
     }
 }
