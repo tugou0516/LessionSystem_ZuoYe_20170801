@@ -25,14 +25,14 @@ public class LinedCS {
     @Column(name="course_id")
     private int courseId;
     @Column(name = "choose_status")
-    private String chooseStatus;
+    private int chooseStatus;
     @Column(name="attendance_status")
-    private String attendanceStatus;
+    private int attendanceStatus;
 
     public LinedCS() {
     }
 
-    public LinedCS(int studentId, Date chooseCourseTime, Date upadteTime, int courseId, String chooseStatus, String attendanceStatus) {
+    public LinedCS(int studentId, Date chooseCourseTime, Date upadteTime, int courseId, int chooseStatus, int attendanceStatus) {
         this.studentId = studentId;
         this.chooseCourseTime = chooseCourseTime;
         this.updateTime = upadteTime;
@@ -81,19 +81,19 @@ public class LinedCS {
         this.courseId = courseId;
     }
 
-    public String getChooseStatus() {
+    public int getChooseStatus() {
         return chooseStatus;
     }
 
-    public void setChooseStatus(String chooseStatus) {
+    public void setChooseStatus(int chooseStatus) {
         this.chooseStatus = chooseStatus;
     }
 
-    public String getAttendanceStatus() {
+    public int getAttendanceStatus() {
         return attendanceStatus;
     }
 
-    public void setAttendanceStatus(String attendanceStatus) {
+    public void setAttendanceStatus(int attendanceStatus) {
         this.attendanceStatus = attendanceStatus;
     }
 
