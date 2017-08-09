@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS `collection_table`;
+DROP TABLE IF EXISTS `test_collection`;
 CREATE TABLE `test_collection` (
   `Id` int(11) NOT NULL AUTO_INCREMENT,
   `student_id` int(11) NOT NULL DEFAULT '0',
