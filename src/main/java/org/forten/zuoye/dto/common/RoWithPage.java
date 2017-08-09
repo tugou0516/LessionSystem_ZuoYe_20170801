@@ -1,4 +1,4 @@
-package org.forten.zuoye.dto;
+package org.forten.zuoye.dto.common;
 
 import org.forten.utils.collection.CollectionUtil;
 import org.forten.utils.system.PageInfo;

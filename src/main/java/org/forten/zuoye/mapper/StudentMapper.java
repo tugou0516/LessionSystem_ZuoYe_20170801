@@ -1,7 +1,7 @@
 package org.forten.zuoye.mapper;
 
 import org.apache.ibatis.annotations.*;
-import org.forten.zuoye.dto.StudentDto4Mybatis;
+import org.forten.zuoye.dto.student.StudentDto4Mybatis;
 import org.forten.zuoye.model.Student;
 
 import java.util.List;

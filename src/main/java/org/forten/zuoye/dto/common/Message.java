@@ -1,4 +1,4 @@
-package org.forten.zuoye.dto;
+package org.forten.zuoye.dto.common;
 
 /**
  * Created by Administrator on 2017/7/3.
