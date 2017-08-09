@@ -5,7 +5,7 @@ CREATE TABLE `test_collection` (
   `choose_course_time` datetime DEFAULT NULL,
   `update_time` datetime DEFAULT NULL,
   `course_id` int(11) NOT NULL DEFAULT '0',
-  `choose_status` varchar(20) NOT NULL DEFAULT '0' COMMENT '0代表未知1代表选中2代表排队3代表退课',
+  `choose_status` varchar(20) NOT NULL DEFAULT '0' COMMENT '0代表未知1代表选中2代表排队3代表退课4代表已修',
   `attendance_status` varchar(30) NOT NULL DEFAULT '0' COMMENT '0代表未知1代表上课2代表旷课3代表请假',
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
