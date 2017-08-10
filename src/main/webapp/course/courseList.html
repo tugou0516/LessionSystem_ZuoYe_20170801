@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="my-div">
+    <table border="1">
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>课程名称</th>
+            <th>教室</th>
+            <th>教师</th>
+            <th>选课开始时间</th>
+            <th>选课结束时间</th>
+            <th>上课时间</th>
+            <th>下课时间</th>
+            <th>学分</th>
+            <th>教室容量</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(c,index) in course">
+            <th>{{index+1}}</th>
+            <th>{{c.name}}</th>
+            <th>{{c.classRoom}}</th>
+            <th>{{c.teacher}}</th>
+            <th>{{c.courseStartTimeStr}}</th>
+            <th>{{c.courseEndTimeStr}}</th>
+            <th>{{c.classStartTimeStr}}</th>
+            <th>{{c.classEndTimeStr}}</th>
+            <th>{{c.score}}</th>
+            <th>{{c.classCapacity}}</th>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script src="../js/jquery-3.2.1.js"></script>
+<script src="../js/vue.js"></script>
+<script src="../js/axios.js"></script>
+<script>
+    var vm = new Vue({
+        el: "#my-div",
+        data: {
+            course: []
+        },
+        created: function () {
+            this.showData();
+        },
+        methods: {
+            showData: function () {
+                axios({
+                    method: "GET",
+                    url: 'list.do'
+                }).then((res) => {
+                    this.course = res.data;
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            }
+        }
+
+    });
+</script>
+</body>
+</html>
