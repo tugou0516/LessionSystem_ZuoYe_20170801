@@ -38,9 +38,18 @@ public class StudentBo {
     }
 
     @Transactional(readOnly = true)
-    public List<Course4StuShowRo> querySelectedCourse(int id){
-        String hql="SELECT new org.forten.zuoye.dto.course.Course4StuShowRo(c.name, c.teacher, c.classRoom, c.courseEndTime, c.classStartTime, c.classEndTime, c.score, l.chooseStatus, l.attendanceStatus, l.chooseCourseTime, l.updateTime) " +
-                "FROM Course c,LinedCS l WHERE c.id=( SELECT l.courseId FROM LinedCS l WHERE l.studentId=:id )";
+    public List<Course4StuShowRo> listCompletedCourse(int id){
+        String hql="SELECT new org.forten.zuoye.dto.course.Course4StuShowRo(c.id,c.name, c.teacher, c.classRoom, c.courseEndTime, c.classStartTime, c.classEndTime, c.score, l.chooseStatus, l.attendanceStatus, l.chooseCourseTime, l.updateTime) " +
+                "FROM Course c RIGHT JOIN LinedCS l ON (c.id=l.courseId) RIGHT JOIN Student s ON (l.studentId=s.id ) WHERE l.chooseStatus=4 AND s.id=:id ";
+        Map<String ,Object> params= new HashMap<>(1);
+        params.put("id",id);
+        return hDao.findBy(hql,params);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Course4StuShowRo> listOtherCourse(int id){
+        String hql="SELECT new org.forten.zuoye.dto.course.Course4StuShowRo(c.id,c.name, c.teacher, c.classRoom, c.courseEndTime, c.classStartTime, c.classEndTime, c.score, l.chooseStatus, l.attendanceStatus, l.chooseCourseTime, l.updateTime) " +
+                "FROM Course c RIGHT JOIN LinedCS l ON (c.id=l.courseId) RIGHT JOIN Student s ON (l.studentId=s.id ) WHERE l.chooseStatus<3 AND s.id=:id ";
         Map<String ,Object> params= new HashMap<>(1);
         params.put("id",id);
         return hDao.findBy(hql,params);
