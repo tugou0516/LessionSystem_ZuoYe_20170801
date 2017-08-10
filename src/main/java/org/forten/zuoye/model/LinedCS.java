@@ -12,7 +12,7 @@ import java.util.Date;
  * Created by student1 on 2017/8/2.
  */
 @Entity
-@Table(name="collection_table")
+@Table(name="test_collection")
 public class LinedCS {
     @Id
     private int id;
