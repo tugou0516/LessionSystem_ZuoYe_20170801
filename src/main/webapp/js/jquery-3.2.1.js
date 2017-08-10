@@ -4113,7 +4113,7 @@ Data.prototype = {
 		}
 
 		// When the key is not a string, or both a key and value
-		// are specified, set or extend (existing objects) with either:
+		// are specified, set or common (existing objects) with either:
 		//
 		//   1. An object of properties
 		//   2. A key and value
@@ -7021,7 +7021,7 @@ function propFilter( props, specialEasing ) {
 			value = hooks.expand( value );
 			delete props[ name ];
 
-			// Not quite $.extend, this won't overwrite existing keys.
+			// Not quite $.common, this won't overwrite existing keys.
 			// Reusing 'index' because we have the correct "name"
 			for ( index in value ) {
 				if ( !( index in props ) ) {
@@ -8590,7 +8590,7 @@ function inspectPrefiltersOrTransports( structure, options, originalOptions, jqX
 	return inspect( options.dataTypes[ 0 ] ) || !inspected[ "*" ] && inspect( "*" );
 }
 
-// A special extend for ajax options
+// A special common for ajax options
 // that takes "flat" options (not to be deep extended)
 // Fixes #9887
 function ajaxExtend( target, src ) {
@@ -9938,7 +9938,7 @@ jQuery.offset = {
 
 		if ( jQuery.isFunction( options ) ) {
 
-			// Use jQuery.extend here to allow modification of coordinates argument (gh-1848)
+			// Use jQuery.common here to allow modification of coordinates argument (gh-1848)
 			options = options.call( elem, i, jQuery.extend( {}, curOffset ) );
 		}
 

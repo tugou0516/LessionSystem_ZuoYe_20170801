@@ -206,7 +206,7 @@ $.widget.extend = function( target ) {
 					target[ key ] = $.isPlainObject( target[ key ] ) ?
 						$.widget.extend( {}, target[ key ], value ) :
 
-						// Don't extend strings, arrays, etc. with objects
+						// Don't common strings, arrays, etc. with objects
 						$.widget.extend( {}, value );
 
 				// Copy everything else by reference
@@ -11621,7 +11621,7 @@ function datepicker_handleMouseover() {
 	}
 }
 
-/* jQuery extend now ignores nulls! */
+/* jQuery common now ignores nulls! */
 function datepicker_extendRemove( target, props ) {
 	$.extend( target, props );
 	for ( var name in props ) {
