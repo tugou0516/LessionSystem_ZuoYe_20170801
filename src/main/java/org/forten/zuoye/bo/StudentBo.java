@@ -4,6 +4,7 @@ import org.forten.utils.common.NumberUtil;
 import org.forten.utils.system.PropertiesFileReader;
 import org.forten.zuoye.dao.HibernateDao;
 import org.forten.zuoye.dao.MyBatisDao;
+import org.forten.zuoye.dto.common.Message;
 import org.forten.zuoye.dto.course.Course4StuShowRo;
 import org.forten.zuoye.dto.student.Student4ShowRo;
 import org.forten.zuoye.mapper.StudentMapper;
@@ -132,6 +133,19 @@ public class StudentBo {
         c.add(Calendar.MONTH,month);
         Date pastDate = c.getTime();
         return pastDate;
+    }
+
+    @Transactional
+    public Message deleteCourseList(int id, Integer ...ids){
+        String hql="DELETE From LinedCS WHERE studentId=:id AND chooseStatus!=4 AND courseId IN (:ids) ";
+        Map<String ,Object> params= new HashMap<>(2);
+        params.put("id",id);
+        params.put("ids", Arrays.asList(ids));
+        int tag=hDao.executeUpdate(hql,params);
+        if(tag!=0)
+            return new Message("退课成功");
+        else
+            return new Message("退课失败");
     }
 
 }
