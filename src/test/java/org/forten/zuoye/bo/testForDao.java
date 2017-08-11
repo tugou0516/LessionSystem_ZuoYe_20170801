@@ -28,8 +28,15 @@ public class testForDao {
     }
 
     @Test
-    public void testQuerySelectedCourse(){
-        List<Course4StuShowRo> list= Bo.querySelectedCourse(4);
+    public void testListCompletedCourse(){
+        List<Course4StuShowRo> list= Bo.listCompletedCourse(5);
+        for (Course4StuShowRo courseInfo : list) {
+            System.out.println(courseInfo);
+        }
+    }
+    @Test
+    public void testListOtherCourse(){
+        List<Course4StuShowRo> list= Bo.listOtherCourse(5);
         for (Course4StuShowRo courseInfo : list) {
             System.out.println(courseInfo);
         }

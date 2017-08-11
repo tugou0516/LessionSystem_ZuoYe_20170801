@@ -7,8 +7,10 @@
 <body>
 
 <div id="stu-info">
-    <button type="button" @click="change">个人信息</button>
-    <table border="1" :hidden="!showFlag">
+    <button type="button" @click="showStuInfo">基本信息</button>
+    <button type="button" @click="showCouInfo">课程信息</button>
+    <div id="private-info"  :hidden="pShowFlag">
+    <table border="1">
         <tbody>
         <tr>
             <th>工号</th><td>{{stu.loginName}}</td>
@@ -31,39 +33,77 @@
         <tr>
             <th>E-mail</th><td>{{stu.email}}</td>
         </tr>
-        <tr>
-            <th>学分</th><td>{{stu.score}}</td>
-        </tr>
         </tbody>
     </table>
-    <!--<table border="1" :hidden="!showFlag">-->
-        <!--<tbody>-->
-        <!--<tr>-->
-            <!--<th>工号</th><td><input v-model="stu.loginName"/></td>-->
-        <!--</tr>-->
-        <!--<tr>-->
-            <!--<th>姓名</th><td><input v-model="stu.name"/></td>-->
-        <!--</tr>-->
-        <!--<tr>-->
-            <!--<th>性别</th><td><input v-model="stu.gender"/></td>-->
-        <!--</tr>-->
-        <!--<tr>-->
-            <!--<th>职位</th><td><input v-model="stu.position"/></td>-->
-        <!--</tr>-->
-        <!--<tr>-->
-            <!--<th>生日</th><td><input v-model="stu.birthdayStr"/></td>-->
-        <!--</tr>-->
-        <!--<tr>-->
-            <!--<th>联系方式</th><td><input v-model="stu.tel"/></td>-->
-        <!--</tr>-->
-        <!--<tr>-->
-            <!--<th>E-mail</th><td><input v-model="stu.email"/></td>-->
-        <!--</tr>-->
-        <!--<tr>-->
-            <!--<th>学分</th><td><input v-model="stu.score"/></td>-->
-        <!--</tr>-->
-        <!--</tbody>-->
-    <!--</table>-->
+    </div>
+    <div id="course-info" :hidden="cShowFlag">
+        <button type="button" @click="showSelected">已选课程信息</button>
+        <button type="button" @click="showCompleted">已修课程信息</button>
+        <div :hidden="selectedFlag">
+        <table id="selected-course-info" border="1">
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>课程名称</th>
+            <th>授课教师</th>
+            <th>上课教室</th>
+            <th>上课时间</th>
+            <th>课程时长</th>
+            <th>退课截止时间</th>
+            <th>学分</th>
+            <th>选中状态</th>
+            <th>
+                <input type="checkbox" @click="toggleSelect"/>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(c,index) in selectedCourses">
+            <td>{{index+1}}</td>
+            <td>{{c.courseName}}</td>
+            <td>{{c.teacher}}</td>
+            <td>{{c.classRoom}}</td>
+            <td>{{c.classStartTimeStr}}</td>
+            <td>{{c.classLength}}分钟</td>
+            <td>{{c.courseEndTimeStr}}</td>
+            <td>{{c.score}}</td>
+            <td>{{c.courseStatusStr}}</td>
+            <td>
+                <input type="checkbox" v-if="c.chooseAble" v-model="delIds" :value="c.courseId" name="ids"/>
+            </td>
+        </tr>
+        </tbody>
+        </table>
+            <button type="button" @click="del">退课</button>
+        </div>
+        <div :hidden="completedFlag">
+        <table id="completed-course-info" border="1" >
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>课程名称</th>
+            <th>授课教师</th>
+            <th>上课教室</th>
+            <th>上课时间</th>
+            <th>课程时长</th>
+            <th>学分</th>
+            <th>考勤</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(c,index) in completedCourses">
+            <td>{{index+1}}</td>
+            <td>{{c.courseName}}</td>
+            <td>{{c.teacher}}</td>
+            <td>{{c.classRoom}}</td>
+            <td>{{c.classStartTimeStr}}</td>
+            <td>{{c.classLength+"分钟"}}</td>
+            <td>{{c.score}}</td>
+            <td>{{c.attendStatusStr}}</td>
+        </tbody>
+    </table>
+        </div>
+    </div>
     <!--<button type="button" :hidden="showFlag" @click="change">更新信息</button>-->
     <!--<button type="button" :hidden="!showFlag" @click="change(),update()">保存</button>-->
 </div>
@@ -75,16 +115,24 @@
         el:'#stu-info',
         data:{
             stu:{},
-            showFlag:false
+            pShowFlag:false,
+            cShowFlag:true,
+            completedCourses:[],
+            selectedCourses:[],
+            selectedFlag:false,
+            completedFlag:true,
+            delIds:[]
         },
         created:function () {
             this.showData();
+            this.showCompletedCourse();
+            this.showOtherCourse();
         },
         methods:{
            showData:function () {
                axios({
                    method:"GET",
-                   url:'show.do'
+                   url:'showPrivateInfo.do'
                }).then((res)=>{
                    this.stu=res.data;
                    }
@@ -92,21 +140,80 @@
                    console.log(err);
                });
            },
-            change:function () {
-                this.showFlag=!this.showFlag;
+            showStuInfo:function () {
+                this.pShowFlag=false;
+                this.cShowFlag=true;
             },
-            update:function () {
+            showCouInfo:function () {
+                this.pShowFlag=true;
+                this.cShowFlag=false;
+            },
+            showSelected:function () {
+                this.selectedFlag=false;
+                this.completedFlag=true;
+            },
+            showCompleted:function () {
+                this.selectedFlag=true;
+                this.completedFlag=false;
+            },
+            showOtherCourse:function () {
                 axios({
-                    method:"POST",
-                    url:'update.do',
-                    data:this.stu
+                    method:"GET",
+                    url:'showOtherCourse.do',
                 }).then((res)=>{
-                    alert(res.data.message);
+                    this.selectedCourses=res.data;
                 }).catch(function (err) {
                     console.log(err);
-                    alert(err.data.message);
                 });
+            },
+            showCompletedCourse:function () {
+                axios({
+                    method:"GET",
+                    url:'showCompletedCourse.do',
+                }).then((res)=>{
+                    this.completedCourses=res.data;
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            },
+            toggleSelect: function (event) {
+                var saInput = event.target;
+                this.delIds = [];
+                if (saInput.checked) {
+                    var idChecks = document.getElementsByName('ids');
+                    for (var i = 0; i < idChecks.length; i++) {
+                        this.delIds.push(idChecks[i].value);
+                    }
+                }
+            },
+            del: function () {
+                if (this.delIds.length > 0) {
+                    console.log(this.delIds.join(','));
+                    axios({
+                        method: "POST",
+                        url: 'deleteCompletedCourse.do',
+                        data: this.delIds
+                    }).then((res) => {
+                        for (var i = 0; i < this.delIds.length; i++) {
+                            for (var j = 0; j < this.selectedCourses.length; j++) {
+                                if (this.selectedCourses[j].id == this.delIds[i]) {
+                                    this.selectedCourses.splice(j, 1);
+                                    break;
+                                } else {
+                                    continue;
+                                }
+                            }
+                        }
+                        this.delIds=[];
+                        alert(res.data.message);
+                    }).catch(function (err) {
+                        console.log(err);
+                    });
+                }else{
+                    alert("请选择要被删除的数据!");
+                }
             }
+
         }
     });
 </script>
