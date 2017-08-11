@@ -49,4 +49,13 @@ public class StudentAction {
         return bo.listOtherCourse(id);
     }
 
+    @RequestMapping("deleteCompletedCourse")
+    public @ResponseBody Message
+    deleteSelectedCourse(@RequestBody Integer...ids){
+        //      listOtherCourse(@RequestBody int id)
+        //      从session获得学员id
+        int id=1;
+        return bo.deleteCourseList(id,ids);
+    }
+
 }
