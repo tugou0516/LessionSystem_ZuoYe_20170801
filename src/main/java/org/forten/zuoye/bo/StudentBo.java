@@ -10,6 +10,8 @@ import org.forten.zuoye.dto.course.Course4StuShowRo;
 import org.forten.zuoye.dto.student.Student4SaveDto;
 import org.forten.zuoye.dto.student.Student4ShowRo;
 import org.forten.zuoye.mapper.StudentMapper;
+import org.forten.zuoye.model.Course;
+import org.forten.zuoye.model.LinedCS;
 import org.forten.zuoye.model.Student;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,6 +55,84 @@ public class StudentBo {
         Map<String ,Object> params= new HashMap<>(1);
         params.put("id",id);
         return hDao.findBy(hql,params);
+    }
+
+    @Transactional
+    // 回传1代表选课成功，2代表课容量已满，3代表学分已超过上限，0代表后台操作失败
+    public int chooseCourse(int stuId, int coId){
+
+        Date nowDate = getNowDate();
+        Date pastDate = getPastDate();
+
+        String hql01 = "SELECT courseId FROM org.forten.zuoye.model.LinedCS WHERE studentId=:stuId AND chooseStatus!=3 AND chooseCourseTime BETWEEN :past AND :now ";
+        Map<String,Object> map01 = new HashMap<>();
+        map01.put("stuId",stuId);
+        map01.put("past",pastDate);
+        map01.put("now",nowDate);
+        List<Integer> list = hDao.findBy(hql01,map01);
+
+        int sumScore = 0;
+        //hql01和hql02不能合并为一句查询语句，因为list可能为空。如果list为空，语句就会报错
+        if(list.size()>0) {
+            String hql02 = "SELECT sum(score) FROM org.forten.zuoye.model.Course WHERE id IN (:arr) ";
+            Map<String, Object> map02 = new HashMap<>();
+            map02.put("arr", list);
+            List<Integer> resultList01 = hDao.findBy(hql02, map02);
+            sumScore = Integer.parseInt(String.valueOf(resultList01.get(0)));
+        }
+
+        String hql03 = "SELECT count(id) FROM org.forten.zuoye.model.LinedCS WHERE courseId=:coId AND chooseStatus=1";
+        Map<String,Object> map03 = new HashMap<>();
+        map03.put("coId",coId);
+        List<?> resultList02 = hDao.findBy(hql03,map03);
+        int chosenNum = Integer.parseInt(String.valueOf(resultList02.get(0)));
+
+        Course course = hDao.getById(coId,Course.class);
+
+        if(chosenNum < course.getClassCapacity()){
+            //TODO 目前学分上限写死为30，等配置文件完成则应读取配置文件中的学分
+            if((course.getScore() + sumScore)>30){
+                return 3;
+            }else {
+                LinedCS cs = new LinedCS(stuId, new Date(), new Date(), coId, 1, 0);
+                return saveCS(cs);
+            }
+        }else {
+            return 2;
+        }
+    }
+
+    @Transactional
+    //回传1代表排队成功，0代表后台操作失败
+    public int getInLine(int stuId, int coId){
+        LinedCS cs = new LinedCS(stuId, new Date(), new Date(), coId, 2, 0);
+        return saveCS(cs);
+    }
+
+
+    private int saveCS(LinedCS cs){
+        try {
+            hDao.save(cs);
+            return 1;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    private Date getNowDate(){
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date());
+        Date nowDate = c.getTime();
+        return nowDate;
+    }
+
+    private Date getPastDate(){
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date());
+        c.add(Calendar.MONTH,-6);//TODO 目前时间段写死为最近的6个月，等配置文件完成则应读取配置文件中的时间
+        Date pastDate = c.getTime();
+        return pastDate;
     }
 
 }
