@@ -1,13 +1,10 @@
 package org.forten.zuoye.bo;
 
-import org.forten.utils.common.StringUtil;
-import org.forten.utils.system.PageInfo;
+import org.forten.utils.common.NumberUtil;
+import org.forten.utils.system.PropertiesFileReader;
 import org.forten.zuoye.dao.HibernateDao;
 import org.forten.zuoye.dao.MyBatisDao;
-import org.forten.zuoye.dto.*;
-import org.forten.zuoye.dto.common.Message;
 import org.forten.zuoye.dto.course.Course4StuShowRo;
-import org.forten.zuoye.dto.student.Student4SaveDto;
 import org.forten.zuoye.dto.student.Student4ShowRo;
 import org.forten.zuoye.mapper.StudentMapper;
 import org.forten.zuoye.model.Course;
@@ -90,8 +87,8 @@ public class StudentBo {
         Course course = hDao.getById(coId,Course.class);
 
         if(chosenNum < course.getClassCapacity()){
-            //TODO 目前学分上限写死为30，等配置文件完成则应读取配置文件中的学分
-            if((course.getScore() + sumScore)>30){
+            int limitScore = NumberUtil.parseNumber(PropertiesFileReader.getValue("properties/settings","SCORE_LIMIT"),Integer.class);
+            if((course.getScore() + sumScore)>limitScore){
                 return 3;
             }else {
                 LinedCS cs = new LinedCS(stuId, new Date(), new Date(), coId, 1, 0);
@@ -130,7 +127,9 @@ public class StudentBo {
     private Date getPastDate(){
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
-        c.add(Calendar.MONTH,-6);//TODO 目前时间段写死为最近的6个月，等配置文件完成则应读取配置文件中的时间
+
+        int month = NumberUtil.parseNumber(PropertiesFileReader.getValue("properties/settings","MONTH"),Integer.class);
+        c.add(Calendar.MONTH,month);
         Date pastDate = c.getTime();
         return pastDate;
     }
