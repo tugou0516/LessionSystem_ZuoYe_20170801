@@ -196,7 +196,7 @@
                     }).then((res) => {
                         for (var i = 0; i < this.delIds.length; i++) {
                             for (var j = 0; j < this.selectedCourses.length; j++) {
-                                if (this.selectedCourses[j].id == this.delIds[i]) {
+                                if (this.selectedCourses[j].courseId == this.delIds[i]) {
                                     this.selectedCourses.splice(j, 1);
                                     break;
                                 } else {

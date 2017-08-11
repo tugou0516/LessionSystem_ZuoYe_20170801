@@ -42,5 +42,9 @@ public class testForDao {
         }
     }
 
+    @Test
+    public void testDeleteCourseList(){
+        Bo.deleteCourseList(1,1);
+    }
 
 }
