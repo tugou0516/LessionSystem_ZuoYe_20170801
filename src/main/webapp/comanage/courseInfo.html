@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>课程信息管理</title>
+    <style>
+        .module{
+            margin-top: 15px;
+        }
+        p{
+            margin-top: 5px;
+            margin-bottom: 5px;
+            font-size: 5px;
+            font-style: italic;
+        }
+        .uneditable{
+            background-color: #d1d1d1;
+        }
+    </style>
+</head>
+<body>
+<div class="module" id="logout">
+    <!-- TODO -->
+    <button>退出登录</button>
+</div>
+<div class="module" id="importAndExport">
+    <!-- TODO -->
+    <button>课程导出</button>
+    <button>课程导入</button>
+</div>
+<div class="module" id="courseList">
+    <div id="select">
+        <label>课程名称 </label><input placeholder="课程名称关键字" v-model="qo.name"><br/>
+        <label>授课教师 </label><input placeholder="授课教师关键字" v-model="qo.teacher"><br/>
+        <label>开课时间 </label><input type="date" placeholder="开课时间-起" v-model="qo.classStartTime">
+        <input type="date" placeholder="开课时间-止" v-model="qo.classEndTime"><br/>
+        <input type="checkbox" v-model="qo.isFinished">显示已结束的课程<br/>
+        <button @click="select">查询</button>
+        <button @click="clear">重置</button>
+    </div>
+    <p>*双击单元格可修改课程信息</p>
+    <p>*灰色单元格不可修改</p>
+    <table border="2">
+        <thead>
+            <tr>
+                <th hidden="hidden"><input type="checkbox">全选</th>
+                <th>ID</th>
+                <th>名称</th>
+                <th>教室</th>
+                <th>授课老师</th>
+                <th>选课开始时间</th>
+                <th>选课结束时间</th>
+                <th>课程开始时间</th>
+                <th>课程结束时间</th>
+                <th>学分</th>
+                <th>课容量</th>
+                <th>报名情况</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="c in courses">
+                <td hidden="hidden" v-model="checkedCourses" :value="c.id"><input type="checkbox"></td>
+                <td class="uneditable">{{c.id}}</td>
+                <td>{{c.name}}</td>
+                <td>{{c.classRoom}}</td>
+                <td>{{c.teacher}}</td>
+                <td>{{c.courseStartTime | dateTime}}</td>
+                <td>{{c.courseEndTime | dateTime}}</td>
+                <td>{{c.classStartTime | dateTime}}</td>
+                <td>{{c.classEndTime | dateTime}}</td>
+                <td>{{c.score}}</td>
+                <td class="uneditable">{{c.classCapacity}}</td>
+                <td><button>查看</button></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="12">
+                    <button>首页</button>
+                    <button>上一页</button>
+                    <span>{{qo.pageNo}} / {{totalPage<!--TODO-->}}</span>
+                    <button>下一页</button>
+                    <button>尾页</button>
+                    <span>跳转页码：<input style="width: 25px"></span>
+                    <button>GO</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<div class="module" id="addAndDel">
+    <button>添加课程</button>
+    <!-- TODO 点击后 1.控件变为“确认删除” 2.id前出现复选框 3.确认删除后批量删除，控件恢复原状-->
+    <button>删除课程</button>
+    <button>确认删除</button>
+</div>
+
+<script src="../js/jquery-3.2.1.js"></script>
+<script src="../js/vue.js"></script>
+<script src="../js/axios.js"></script>
+<script>
+    $(function () {
+        Vue.filter('dateTime',function (value) {
+            var dateTime = new Date(value);
+            Y = dateTime.getFullYear();
+            M = dateTime.getMonth()+1;
+            d = dateTime.getDate();
+            H = dateTime.getHours();
+            m = dateTime.getMinutes();
+            s = dateTime.getSeconds();
+            if(M<10){
+                M = "0"+M;
+            }
+            if(d<10){
+                d = "0"+d;
+            }
+            if(H<10){
+                H = "0"+H;
+            }
+            if(m<10){
+                m = "0"+m;
+            }
+            if(s<10){
+                s = "0"+s;
+            }
+            var t = Y+"-"+M+"-"+d+" "+H+":"+m+":"+s;
+            return t;
+        })
+    });
+    var vm01 = new Vue({
+        el:'#courseList',
+        data:{
+            qo:{},
+            courses:[],
+            checkedCourses:[]
+        },
+        methods:{
+            select:function () {
+                console.log(this.qo);
+
+            },
+            clear:function () {
+                this.qo = {};
+            }
+        },
+        created:function () {
+            this.select();
+        }
+    });
+</script>
+</body>
+</html>
