@@ -58,4 +58,18 @@ public class StudentAction {
         return bo.deleteCourseList(id,ids);
     }
 
+    @RequestMapping("chooseCourse")
+    public @ResponseBody int chooseCourse(@RequestBody int[] ids){
+        int stuId = ids[0];
+        int coId = ids[1];
+        return bo.chooseCourse(stuId,coId);
+    }
+
+    @RequestMapping("getInLine")
+    public @ResponseBody int getInLine(@RequestBody int[] ids){
+        int stuId = ids[0];
+        int coId = ids[1];
+        return bo.getInLine(stuId,coId);
+    }
+
 }

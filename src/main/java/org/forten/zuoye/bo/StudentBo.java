@@ -59,7 +59,7 @@ public class StudentBo {
     // 回传1代表选课成功，2代表课容量已满，3代表学分已超过上限，0代表后台操作失败
     public int chooseCourse(int stuId, int coId){
 
-        Date nowDate = getNowDate();
+        Date nowDate = new Date();
         Date pastDate = getPastDate();
 
         String hql01 = "SELECT courseId FROM org.forten.zuoye.model.LinedCS WHERE studentId=:stuId AND chooseStatus!=3 AND chooseCourseTime BETWEEN :past AND :now ";
@@ -118,19 +118,12 @@ public class StudentBo {
         }
     }
 
-    private Date getNowDate(){
-        Calendar c = Calendar.getInstance();
-        c.setTime(new Date());
-        Date nowDate = c.getTime();
-        return nowDate;
-    }
-
     private Date getPastDate(){
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
 
         int month = NumberUtil.parseNumber(PropertiesFileReader.getValue("properties/settings","MONTH"),Integer.class);
-        c.add(Calendar.MONTH,month);
+        c.add(Calendar.MONTH,-month);
         Date pastDate = c.getTime();
         return pastDate;
     }
