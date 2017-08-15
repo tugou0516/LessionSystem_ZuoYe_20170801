@@ -26,7 +26,8 @@
 <div class="module" id="importAndExport">
     <!-- TODO -->
     <button>课程导出</button>
-    <button>课程导入</button>
+    <input type="file">
+    <button>课程上传</button>
 </div>
 <div class="module" id="courseList">
     <div id="select">
@@ -43,7 +44,7 @@
     <table border="2">
         <thead>
             <tr>
-                <th hidden="hidden"><input type="checkbox">全选</th>
+                <th class="check" hidden="hidden"><input type="checkbox" @change="checkAll">全选</th>
                 <th>ID</th>
                 <th>名称</th>
                 <th>教室</th>
@@ -54,12 +55,13 @@
                 <th>课程结束时间</th>
                 <th>学分</th>
                 <th>课容量</th>
+                <th>课程状态</th>
                 <th>报名情况</th>
             </tr>
         </thead>
         <tbody>
             <tr v-for="c in courses">
-                <td hidden="hidden" v-model="checkedCourses" :value="c.id"><input type="checkbox"></td>
+                <td class="check" hidden="hidden" v-model="checkedCourses" :value="c.id"><input type="checkbox"></td>
                 <td class="uneditable">{{c.id}}</td>
                 <td>{{c.name}}</td>
                 <td>{{c.classRoom}}</td>
@@ -70,19 +72,20 @@
                 <td>{{c.classEndTime | dateTime}}</td>
                 <td>{{c.score}}</td>
                 <td class="uneditable">{{c.classCapacity}}</td>
+                <td>{{nowDateTime | courseStatus(c.courseStartTime,c.courseEndTime,c.classStartTime)}}</td>
                 <td><button>查看</button></td>
             </tr>
         </tbody>
         <tfoot>
             <tr>
                 <td colspan="12">
-                    <button>首页</button>
-                    <button>上一页</button>
-                    <span>{{qo.pageNo}} / {{totalPage<!--TODO-->}}</span>
-                    <button>下一页</button>
-                    <button>尾页</button>
-                    <span>跳转页码：<input style="width: 25px"></span>
-                    <button>GO</button>
+                    <button @click="toFirstPage">首页</button>
+                    <button @click="toPrePage">上一页</button>
+                    <span>{{pageNo}} / {{totalPage}}</span>
+                    <button @click="toNextPage">下一页</button>
+                    <button @click="toLastPage">尾页</button>
+                    <span>跳转页码：<input style="width: 25px" v-model="qo.pageNo"></span>
+                    <button @click="select">GO</button>
                 </td>
             </tr>
         </tfoot>
@@ -90,9 +93,8 @@
 </div>
 <div class="module" id="addAndDel">
     <button>添加课程</button>
-    <!-- TODO 点击后 1.控件变为“确认删除” 2.id前出现复选框 3.确认删除后批量删除，控件恢复原状-->
-    <button>删除课程</button>
-    <button>确认删除</button>
+    <button id="delCheckBtn" @click="delCheck">删除课程</button>
+    <button id="delDoBtn" hidden="hidden" @click="delDo">确认删除</button>
 </div>
 
 <script src="../js/jquery-3.2.1.js"></script>
@@ -123,24 +125,110 @@
             if(s<10){
                 s = "0"+s;
             }
-            var t = Y+"-"+M+"-"+d+" "+H+":"+m+":"+s;
-            return t;
+            return Y+"-"+M+"-"+d+" "+H+":"+m+":"+s;
+        });
+        Vue.filter('courseStatus',function (value,t1,t2,t3) {
+            if(value<t1){
+                return "备课中";
+            }
+            if(value>=t1 && value<t2){
+                return "选课中";
+            }
+            if(value>=t2 && value<t3){
+                return "选课结束";
+            }
+            if(value>=t3){
+                return "已结课";
+            }
         })
     });
     var vm01 = new Vue({
         el:'#courseList',
         data:{
-            qo:{},
+            qo:{
+                pageNo:1,
+                pageSize:5
+            },
             courses:[],
-            checkedCourses:[]
+            checkedCourses:[],
+            pageNo:1,
+            totalPage:1,
+            nowDateTime:new Date()
         },
         methods:{
             select:function () {
                 console.log(this.qo);
-
+                axios({
+                    method:"POST",
+                    url:"selectBy.do",
+                    data:this.qo
+                }).then(function (res) {
+                    if(res.data.emptyData){
+                        alert("未查询到匹配的数据");
+                    }
+                    vm01.courses = res.data.dataList;
+                    vm01.pageNo = res.data.page.pageNo;
+                    vm01.totalPage = res.data.page.totalPage;
+                }).catch(function (err) {
+                    console.log(err);
+                    alert("查询出错");
+                });
             },
             clear:function () {
-                this.qo = {};
+                this.qo = {pageNo:1,pageSize:5};
+            },
+            checkAll:function (event) {
+                var _this = event.target;
+                vm01.checkedCourses = [];
+                if(_this.checked){
+                    vm01.courses.forEach(e=>{
+                        vm01.checkedCourses.push(e.id);
+                    })
+                }
+            },
+            delCheck:function () {
+                $('#delCheckBtn').attr("hidden","hidden");
+                $('#delDoBtn').removeAttr("hidden");
+                $('.check').removeAttr("hidden");
+            },
+            delDo:function () {
+                if(confirm("确认删除所选的课程？")){
+                    console.log(this.checkedCourses);
+                    axios({
+                        method:"POST",
+                        url:"delByArray.do",
+                        data:this.checkedCourses
+                    }).then(function (res) {
+                        alert("成功删除"+res.data+"条数据");
+                    }).catch(function (err) {
+                        alert("删除出错："+err);
+                    });
+                }
+                $('#delCheckBtn').removeAttr("hidden");
+                $('#delDoBtn').attr("hidden","hidden");
+                $('.check').attr("hidden","hidden");
+                vm01.checkedCourses = [];
+                vm01.select();
+            },
+            toFirstPage:function () {
+                this.qo.pageNo = 1;
+                this.select();
+            },
+            toPrePage:function () {
+                if(this.qo.pageNo>1){
+                    this.qo.pageNo = this.qo.pageNo-1;
+                    this.select();
+                }
+            },
+            toNextPage:function () {
+                if((this.qo.pageNo+1)<=this.totalPage){
+                    this.qo.pageNo = this.qo.pageNo+1;
+                    this.select();
+                }
+            },
+            toLastPage:function () {
+                this.qo.pageNo = this.totalPage;
+                this.select();
             }
         },
         created:function () {
