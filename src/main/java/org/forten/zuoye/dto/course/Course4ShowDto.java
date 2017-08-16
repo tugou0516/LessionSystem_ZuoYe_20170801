@@ -1,9 +1,8 @@
-package org.forten.zuoye.dto;
+package org.forten.zuoye.dto.course;
 
 import org.forten.utils.common.DateUtil;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Column;
 import java.util.Date;
 
 /**
@@ -24,6 +23,8 @@ public class Course4ShowDto {
     private Date classEndTime;
     private int score;
     private int classCapacity;
+    private int chooseStatus;
+    private boolean isChoose;
 
     public Course4ShowDto() {
     }
@@ -41,12 +42,45 @@ public class Course4ShowDto {
         this.classCapacity = classCapacity;
     }
 
-    public int getId() {
+    public Course4ShowDto(int chooseStatus) {
+        this.chooseStatus = chooseStatus;
+    }
+
+    public Course4ShowDto(int id, String name, String classRoom, String teacher, Date courseStartTime, Date courseEndTime, Date classStartTime, Date classEndTime, int score, int classCapacity, int chooseStatus, boolean isChoose) {
+        this.id = id;
+        this.name = name;
+        this.classRoom = classRoom;
+        this.teacher = teacher;
+        this.courseStartTime = courseStartTime;
+        this.courseEndTime = courseEndTime;
+        this.classStartTime = classStartTime;
+        this.classEndTime = classEndTime;
+        this.score = score;
+        this.classCapacity = classCapacity;
+        this.chooseStatus = chooseStatus;
+        this.isChoose = isChoose;
+    }
+
+    public Course4ShowDto(int id, String name, String classRoom, String teacher, Date courseStartTime, Date courseEndTime, Date classStartTime, Date classEndTime, int chooseStatus, int score, int classCapacity) {
+        this.id = id;
+        this.name = name;
+        this.classRoom = classRoom;
+        this.teacher = teacher;
+        this.courseStartTime = courseStartTime;
+        this.courseEndTime = courseEndTime;
+        this.classStartTime = classStartTime;
+        this.classEndTime = classEndTime;
+        this.chooseStatus = chooseStatus;
+        this.score = score;
+        this.classCapacity = classCapacity;
+    }
+
+    public int getCourseId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setCourseId(int courseId) {
+        this.id = courseId;
     }
 
     public String getName() {
@@ -121,17 +155,38 @@ public class Course4ShowDto {
         this.classCapacity = classCapacity;
     }
 
+    public int getChooseStatus() {
+        return chooseStatus;
+    }
+
+    public void setChooseStatus(int chooseStatus) {
+        this.chooseStatus = chooseStatus;
+    }
+
+    public boolean isChoose() {
+        return isChoose;
+    }
+
+    public void setChoose(boolean choose) {
+        isChoose = choose;
+    }
+
+
+
     public String getCourseStartTimeStr() {
-        return DateUtil.convertDateToString(courseStartTime,"yyyy年MM月dd日 HH:mm:ss");
+        return DateUtil.convertDateToString(courseStartTime, "yyyy年MM月dd日 HH:mm:ss");
     }
+
     public String getCourseEndTimeStr() {
-        return DateUtil.convertDateToString(courseStartTime,"yyyy年MM月dd日 HH:mm:ss");
+        return DateUtil.convertDateToString(courseStartTime, "yyyy年MM月dd日 HH:mm:ss");
     }
+
     public String getClassStartTimeStr() {
-        return DateUtil.convertDateToString(courseStartTime,"yyyy年MM月dd日 HH:mm:ss");
+        return DateUtil.convertDateToString(courseStartTime, "yyyy年MM月dd日 HH:mm:ss");
     }
+
     public String getClassEndTimeStr() {
-        return DateUtil.convertDateToString(courseStartTime,"yyyy年MM月dd日 HH:mm:ss");
+        return DateUtil.convertDateToString(courseStartTime, "yyyy年MM月dd日 HH:mm:ss");
     }
 
     @Override
@@ -152,7 +207,7 @@ public class Course4ShowDto {
     @Override
     public String toString() {
         return "Course4ShowDto{" +
-                "id=" + id +
+                "courseId=" + id +
                 ", name='" + name + '\'' +
                 ", classRoom='" + classRoom + '\'' +
                 ", teacher='" + teacher + '\'' +
@@ -162,6 +217,8 @@ public class Course4ShowDto {
                 ", classEndTime=" + classEndTime +
                 ", score=" + score +
                 ", classCapacity=" + classCapacity +
+                ", chooseStatus=" + chooseStatus +
+                ", isChoose=" + isChoose +
                 '}';
     }
 }
