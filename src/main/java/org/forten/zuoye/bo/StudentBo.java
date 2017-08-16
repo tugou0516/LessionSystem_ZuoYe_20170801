@@ -1,11 +1,16 @@
 package org.forten.zuoye.bo;
 
 import org.forten.utils.common.NumberUtil;
+import org.forten.utils.system.PageInfo;
 import org.forten.utils.system.PropertiesFileReader;
 import org.forten.zuoye.dao.HibernateDao;
 import org.forten.zuoye.dao.MyBatisDao;
 import org.forten.zuoye.dto.common.Message;
+import org.forten.zuoye.dto.common.RoWithPage;
+import org.forten.zuoye.dto.course.CQo;
+import org.forten.zuoye.dto.course.Course4ShowDto;
 import org.forten.zuoye.dto.course.Course4StuShowRo;
+import org.forten.zuoye.dto.course.CourseId;
 import org.forten.zuoye.dto.student.Student4ShowRo;
 import org.forten.zuoye.mapper.StudentMapper;
 import org.forten.zuoye.model.Course;
@@ -16,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.forten.utils.system.BeanPropertyUtil;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -139,6 +146,55 @@ public class StudentBo {
             return new Message("退课成功");
         else
             return new Message("退课失败");
+    }
+
+    @Transactional
+    public RoWithPage<Course4ShowDto> listAll(CQo qo){
+        int id=1;
+        //选出未修过课程的ID
+        String noSelectHql = "SELECT courseId FROM LinedCS WHERE chooseStatus=4 AND studentId=:id ";
+        Map<String, Object> param1 = new HashMap<>(1);
+        param1.put("id",id);
+        List<Integer> idList =hDao.findBy(noSelectHql,param1);
+        Integer[] ids=new Integer[idList.size()];
+        idList.toArray(ids);
+
+        Map<String, Object> param2 = new HashMap<>(1);
+        param2.put("ids",idList);
+
+        //选出未修课程总数目
+        String countHql="SELECT count(id) FROM Course WHERE 1=1 AND id NOT IN (:ids)";
+        long count= hDao.findOneBy(countHql,param2);
+
+        //无符合条件数据
+        if(count==0)
+            return RoWithPage.EMPTY_RO;
+        else {
+            //分页信息
+            PageInfo page = PageInfo.getInstance(qo.getPageNo(), qo.getPageSize(), count);
+            //选出单页排除已修并无选择状态的课程
+            String hql = "SELECT new org.forten.zuoye.dto.course.Course4ShowDto(c.id, c.name, c.classRoom, c.teacher, c.courseStartTime, c.courseEndTime, c.classStartTime, c.classEndTime, c.score, c.classCapacity) " +
+                    "FROM Course c WHERE c.id NOT IN (:ids)";
+            List<Course4ShowDto> courseList = hDao.findBy(hql, param2, (int) page.getFirstResultNum(), page.getPageSize());
+
+            //选出课程状态
+            String selectedHql = "SELECT new org.forten.zuoye.dto.course.CourseId(courseId,chooseStatus) FROM LinedCS WHERE studentId= :id ";
+            List<CourseId> selectedCourse = hDao.findBy(selectedHql, param1);
+
+            for (Course4ShowDto x : courseList) {
+                for (CourseId i : selectedCourse) {
+                    if (i.getCourseId() == x.getCourseId()) {
+                        x.setChooseStatus(i.getChooseStatus());
+                        if (i.getChooseStatus() == 1) {
+                            x.setChoose(false);
+                        } else {
+                            x.setChoose(true);
+                        }
+                    }
+                }
+            }
+            return new RoWithPage<>(courseList, page);
+        }
     }
 
 }
