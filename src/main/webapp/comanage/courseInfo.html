@@ -79,11 +79,11 @@
         <tfoot>
             <tr>
                 <td colspan="12">
-                    <button @click="toFirstPage">首页</button>
-                    <button @click="toPrePage">上一页</button>
+                    <button @click="changePage(1)">首页</button>
+                    <button @click="changePage(qo.pageNo-1)">上一页</button>
                     <span>{{pageNo}} / {{totalPage}}</span>
-                    <button @click="toNextPage">下一页</button>
-                    <button @click="toLastPage">尾页</button>
+                    <button @click="changePage(qo.pageNo+1)">下一页</button>
+                    <button @click="changePage(page.totalPage)">尾页</button>
                     <span>跳转页码：<input style="width: 25px" v-model="qo.pageNo"></span>
                     <button @click="select">GO</button>
                 </td>
@@ -151,8 +151,10 @@
             },
             courses:[],
             checkedCourses:[],
-            pageNo:1,
-            totalPage:1,
+            page:{
+                pageNo:1,
+                totalPage:1,
+            },
             nowDateTime:new Date()
         },
         methods:{
@@ -167,8 +169,8 @@
                         alert("未查询到匹配的数据");
                     }
                     vm01.courses = res.data.dataList;
-                    vm01.pageNo = res.data.page.pageNo;
-                    vm01.totalPage = res.data.page.totalPage;
+                    vm01.page.pageNo = res.data.page.pageNo;
+                    vm01.page.totalPage = res.data.page.totalPage;
                 }).catch(function (err) {
                     console.log(err);
                     alert("查询出错");
@@ -210,24 +212,14 @@
                 vm01.checkedCourses = [];
                 vm01.select();
             },
-            toFirstPage:function () {
-                this.qo.pageNo = 1;
-                this.select();
-            },
-            toPrePage:function () {
-                if(this.qo.pageNo>1){
-                    this.qo.pageNo = this.qo.pageNo-1;
-                    this.select();
+            changePage:function (page) {
+                if(page>this.page.totalPage){
+                    page = this.page.totalPage;
                 }
-            },
-            toNextPage:function () {
-                if((this.qo.pageNo+1)<=this.totalPage){
-                    this.qo.pageNo = this.qo.pageNo+1;
-                    this.select();
+                if(page<1){
+                    page = 1;
                 }
-            },
-            toLastPage:function () {
-                this.qo.pageNo = this.totalPage;
+                this.qo.pageNo = page;
                 this.select();
             }
         },
