@@ -13,33 +13,34 @@ import java.util.Date;
  * Created by student1 on 2017/8/1.
  */
 @Entity
-@Table(name="test_course")
+@Table(name = "test_course")
 public class Course {
     @Id
     private int id;
     @Column
     private String name;
-    @Column(name="class_room")
+    @Column(name = "class_room")
     private String classRoom;
     @Column
     private String teacher;
-    @Column(name="course_start_time")
+    @Column(name = "course_start_time")
     private Date courseStartTime;
-    @Column(name="course_end_time")
+    @Column(name = "course_end_time")
     private Date courseEndTime;
-    @Column(name="class_start_time")
+    @Column(name = "class_start_time")
     private Date classStartTime;
-    @Column(name="class_end_time")
+    @Column(name = "class_end_time")
     private Date classEndTime;
     @Column
     private int score;
-    @Column(name="class_rl")
+    @Column(name = "class_rl")
     private int classCapacity;
 
     public Course() {
     }
 
-    public Course(String name, String classRoom, String teacher, Date courseStartTime, Date courseEndTime, Date classStartTime, Date classEndTime, int score, int classCapacity) {
+    public Course(int id, String name, String classRoom, String teacher, Date courseStartTime, Date courseEndTime, Date classStartTime, Date classEndTime, int score, int classCapacity) {
+        this.id = id;
         this.name = name;
         this.classRoom = classRoom;
         this.teacher = teacher;
