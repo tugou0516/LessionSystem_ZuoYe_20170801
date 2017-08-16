@@ -1,7 +1,9 @@
 package org.forten.zuoye.action;
 
 import org.forten.zuoye.bo.CourseBo;
-import org.forten.zuoye.dto.Course4ShowDto;
+import org.forten.zuoye.dto.course.Course4ShowDto;
+import org.forten.zuoye.model.Course;
+import org.forten.zuoye.model.LinedCS;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -22,6 +24,8 @@ public class CourseAction {
     @RequestMapping("list")
     public @ResponseBody
     List<Course4ShowDto> list() {
-        return bo.doListAll();
+        int id = 1;
+        return bo.doListAll(id);
     }
+
 }
