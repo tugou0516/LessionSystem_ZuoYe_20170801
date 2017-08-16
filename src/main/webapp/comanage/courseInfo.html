@@ -61,7 +61,7 @@
         </thead>
         <tbody>
             <tr v-for="c in courses">
-                <td class="check" hidden="hidden" v-model="checkedCourses" :value="c.id"><input type="checkbox"></td>
+                <td class="check" hidden="hidden"><input type="checkbox" v-model="checkedCourses" :value="c.id"></td>
                 <td class="uneditable">{{c.id}}</td>
                 <td>{{c.name}}</td>
                 <td>{{c.classRoom}}</td>
@@ -81,7 +81,7 @@
                 <td colspan="12">
                     <button @click="changePage(1)">首页</button>
                     <button @click="changePage(qo.pageNo-1)">上一页</button>
-                    <span>{{pageNo}} / {{totalPage}}</span>
+                    <span>{{page.pageNo}} / {{page.totalPage}}</span>
                     <button @click="changePage(qo.pageNo+1)">下一页</button>
                     <button @click="changePage(page.totalPage)">尾页</button>
                     <span>跳转页码：<input style="width: 25px" v-model="qo.pageNo"></span>

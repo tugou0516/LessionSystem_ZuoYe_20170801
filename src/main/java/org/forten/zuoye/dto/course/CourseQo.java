@@ -23,10 +23,9 @@ public class CourseQo {
         Calendar calendar = Calendar.getInstance();
         calendar.set(1900,0,1);
         this.classStartTime = calendar.getTime();
-        this.classEndTime = new Date();
-        this.pageNo = 1;
-        this.pageSize = Integer.parseInt(PropertiesFileReader.getValue("properties/settings","PAGE_SIZE"));
-        this.isFinished = true;
+        calendar.set(2500,12,31);
+        this.classEndTime = calendar.getTime();
+        this.isFinished = true;//TODO
     }
 
     public String getName() {
