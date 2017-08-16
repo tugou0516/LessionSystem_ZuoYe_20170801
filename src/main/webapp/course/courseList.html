@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="my-div">
+    <p>超出选课时间范围不予选课和退课</p>
+    <table border="1" class="container">
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>课程名称</th>
+            <th>教室</th>
+            <th>教师</th>
+            <th>选课开始时间</th>
+            <th>选课结束时间</th>
+            <th>上课时间</th>
+            <th>下课时间</th>
+            <th>学分</th>
+            <th>教室容量</th>
+            <th>选择状态</th>
+            <!--<th><input type="checkbox" @change="ch"></th>-->
+            <th>选课</th>
+            <th>退课</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(c,index) in course">
+            <td>{{index+1}}</td>
+            <td>{{c.name}}</td>
+            <td>{{c.classRoom}}</td>
+            <td>{{c.teacher}}</td>
+            <td>{{c.courseStartTimeStr}}</td>
+            <td>{{c.courseEndTimeStr}}</td>
+            <td>{{c.classStartTimeStr}}</td>
+            <td>{{c.classEndTimeStr}}</td>
+            <td>{{c.score}}</td>
+            <td>{{c.classCapacity}}</td>
+            <td>{{c.chooseStatus}}</td>
+            <td>
+                <button type="button" @click="chooseBtn" v-if="isChoose" name="ids" :value="c.id">点击选课</button>
+            </td>
+            <td>
+                <input type="checkbox" name="choosebtn" :value="c.id">点击退课</input>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script src="../js/jquery-3.2.1.js"></script>
+<script src="../js/vue.js"></script>
+<script src="../js/axios.js"></script>
+<script src="../css/bootstrap.css"></script>
+<script>
+    var vm = new Vue({
+        el: "#my-div",
+        data: {
+            isChoose:false,
+            course: [],
+            ids: []
+        },
+        created: function () {
+            this.showData();
+            this.chooseBtn();
+        },
+        methods: {
+            showData: function () {
+                axios({
+                    method: "GET",
+                    url: 'list.do'
+                }).then((res) => {
+                    this.course = res.data;
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            },
+            ch: function (event) {
+                var btn = event.target;
+                this.ids = [];
+            },
+            chooseBtn: function () {
+                var courseId = document.getElementsByName('ids');
+                this.ids.push(courseId.value);
+                alert(this.ids);
+                if (this.ids.length > 0) {
+                    axios({
+                        method: 'POST',
+                        url: 'chooseCourse.do',
+                        data: this.ids
+                    }).then((res) => {
+                        for (var i = 0; i < this.ids.length; i++) {
+                            for (var j = 0; j < this.course.length; j++) {
+                                if (this.course[j].ids == this.ids[i]) {
+                                    this.course.splice(j, 1);
+                                    break;
+                                } else {
+                                    continue;
+                                }
+                            }
+                        }
+                        this.ids = [];
+                        alert(res.message);
+                    }).catch(function (err) {
+                        console.log(err);
+                    });
+                } else {
+                    this.chooseBtn = false;
+                }
+            }
+        }
+    });
+</script>
+</body>
+</html>
