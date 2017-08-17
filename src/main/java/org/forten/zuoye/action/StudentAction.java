@@ -2,7 +2,10 @@ package org.forten.zuoye.action;
 
 import org.forten.zuoye.bo.StudentBo;
 import org.forten.zuoye.dto.common.Message;
+import org.forten.zuoye.dto.common.RoWithPage;
+import org.forten.zuoye.dto.course.Course4ShowDto;
 import org.forten.zuoye.dto.course.Course4StuShowRo;
+import org.forten.zuoye.dto.course.CourseQo4Stu;
 import org.forten.zuoye.dto.student.Student4SaveDto;
 import org.forten.zuoye.dto.student.Student4ShowRo;
 import org.springframework.stereotype.Controller;
@@ -25,7 +28,6 @@ public class StudentAction {
     @RequestMapping("showPrivateInfo")
     public @ResponseBody
     Student4ShowRo getOne(){
-        //      listOtherCourse(@RequestBody int id)
         //        从session获得学员id
         int id=1;
         return bo.doSelectByIdH(id);
@@ -34,7 +36,6 @@ public class StudentAction {
     @RequestMapping("showCompletedCourse")
     public @ResponseBody
     List<Course4StuShowRo> listCompletedCourse(){
-        //      listOtherCourse(@RequestBody int id)
         //        从session获得学员id
         int id=1;
         return bo.listCompletedCourse(id);
@@ -43,7 +44,6 @@ public class StudentAction {
     @RequestMapping("showOtherCourse")
     public @ResponseBody
     List<Course4StuShowRo> listOtherCourse(){
-        //      listOtherCourse(@RequestBody int id)
         //      从session获得学员id
         int id=1;
         return bo.listOtherCourse(id);
@@ -52,24 +52,33 @@ public class StudentAction {
     @RequestMapping("deleteCompletedCourse")
     public @ResponseBody Message
     deleteSelectedCourse(@RequestBody Integer...ids){
-        //      listOtherCourse(@RequestBody int id)
         //      从session获得学员id
         int id=1;
         return bo.deleteCourseList(id,ids);
     }
 
     @RequestMapping("chooseCourse")
-    public @ResponseBody int chooseCourse(@RequestBody int[] ids){
-        int stuId = ids[0];
-        int coId = ids[1];
+    public @ResponseBody int chooseCourse(int id){
+        //  从session获得学员id
+        int stuId = 1;
+        int coId = id;
         return bo.chooseCourse(stuId,coId);
     }
 
     @RequestMapping("getInLine")
-    public @ResponseBody int getInLine(@RequestBody int[] ids){
-        int stuId = ids[0];
-        int coId = ids[1];
+    public @ResponseBody int getInLine(int id){
+        int stuId = 1;
+        int coId = id;
         return bo.getInLine(stuId,coId);
     }
+
+    @RequestMapping("listAllCourse")
+    public @ResponseBody
+    RoWithPage<Course4ShowDto> list(@RequestBody CourseQo4Stu qo) {
+        // 从session获得学员id
+        int id = 1;
+        return bo.doListAll(qo,id);
+    }
+
 
 }
