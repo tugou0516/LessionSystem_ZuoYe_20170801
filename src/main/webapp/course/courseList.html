@@ -7,6 +7,8 @@
 <body>
 <div id="my-div">
     <p>超出选课时间范围不予选课和退课</p>
+    <button type="button" :disabled="selectId==0" @click="selectCourse">选课</button>
+    <button type="button" @click="toPrivateInfo">返回个人信息</button>
     <table border="1" class="container">
         <thead>
         <tr>
@@ -23,11 +25,10 @@
             <th>选择状态</th>
             <!--<th><input type="checkbox" @change="ch"></th>-->
             <th>选课</th>
-            <th>退课</th>
         </tr>
         </thead>
         <tbody>
-        <tr v-for="(c,index) in course">
+        <tr v-for="(c,index) in courseList">
             <td>{{index+1}}</td>
             <td>{{c.name}}</td>
             <td>{{c.classRoom}}</td>
@@ -38,16 +39,24 @@
             <td>{{c.classEndTimeStr}}</td>
             <td>{{c.score}}</td>
             <td>{{c.classCapacity}}</td>
-            <td>{{c.chooseStatus}}</td>
+            <td>{{c.chooseStatusStr}}</td>
             <td>
-                <button type="button" @click="chooseBtn" v-if="isChoose" name="ids" :value="c.id">点击选课</button>
-            </td>
-            <td>
-                <input type="checkbox" name="choosebtn" :value="c.id">点击退课</input>
+               <input type="radio" v-model="selectId" v-if="c.isChoose" :value="c.id"/>
             </td>
         </tr>
         </tbody>
     </table>
+    <div>
+    <span>第{{page.pageNo}}页/共{{page.totalPage}}页</span>
+    <span>第{{page.firstResultNum+1}}条~第{{page.lastResultNum}}条/共{{page.totalQuantity}}条</span>
+    </div>
+    <div><button @click="setPageNo(1)">首页</button>
+        <button @click="setPageNo(qo.pageNo-1)">上一页</button>
+        <input v-model="qo.pageNo" /><button @click="setPageNo(qo.pageNo)" type="button">跳转</button>
+        <button @click="setPageNo(qo.pageNo+1)">下一页</button>
+        <button @click="setPageNo(page.totalPage)">尾页</button>
+    </div>
+
 </div>
 <script src="../js/jquery-3.2.1.js"></script>
 <script src="../js/vue.js"></script>
@@ -57,57 +66,91 @@
     var vm = new Vue({
         el: "#my-div",
         data: {
-            isChoose:false,
-            course: [],
-            ids: []
+            selectId:0,
+            qo:{
+                pageNo:1,
+                pageSize:3
+            },
+            courseList:[],
+            page:{
+                pageNo:1,
+                pageSize:3
+            },
         },
         created: function () {
             this.showData();
-            this.chooseBtn();
         },
         methods: {
             showData: function () {
                 axios({
-                    method: "GET",
-                    url: 'list.do'
+                    method: "POST",
+                    url: '../student/listAllCourse.do',
+                    data:this.qo
                 }).then((res) => {
-                    this.course = res.data;
+                    this.courseList = res.data.dataList;
+                    this.page=res.data.page;
                 }).catch(function (err) {
                     console.log(err);
                 });
             },
-            ch: function (event) {
-                var btn = event.target;
-                this.ids = [];
-            },
-            chooseBtn: function () {
-                var courseId = document.getElementsByName('ids');
-                this.ids.push(courseId.value);
-                alert(this.ids);
-                if (this.ids.length > 0) {
-                    axios({
-                        method: 'POST',
-                        url: 'chooseCourse.do',
-                        data: this.ids
-                    }).then((res) => {
-                        for (var i = 0; i < this.ids.length; i++) {
-                            for (var j = 0; j < this.course.length; j++) {
-                                if (this.course[j].ids == this.ids[i]) {
-                                    this.course.splice(j, 1);
-                                    break;
-                                } else {
-                                    continue;
-                                }
-                            }
-                        }
-                        this.ids = [];
-                        alert(res.message);
-                    }).catch(function (err) {
-                        console.log(err);
-                    });
-                } else {
-                    this.chooseBtn = false;
+            setPageNo:function (n) {
+                if (n > this.page.totalPage) {
+                    n = this.page.totalPage;
                 }
+                if (n < 1) {
+                    n = 1;
+                }
+                this.qo.pageNo = n;
+                this.showData();
+
+            },
+            selectCourse:function () {
+                axios({
+                    method: "GET",
+                    url: '../student/chooseCourse.do?id='+this.selectId
+                }).then((res) => {
+                    var sta=res.data;
+                    if(sta==1){
+                        alert("选课成功");
+                        this.showData();
+                    }
+                    else if(sta==2)
+                    {
+                        var flag=confirm("课容量已满，是否选择排队？");
+                        if(flag)
+                            this.getInLine();
+                        else
+                            this.showData();
+                    }
+                    else if(sta==3)
+                    {
+                        alert("已超学分上限");
+                        this.showData();
+                    }
+                    else
+                        alert("请稍候尝试");
+
+                }).catch(function (err) {
+                    console.log(err);
+                    alert("选课失败，请稍候尝试");
+                });
+            },
+            getInLine:function () {
+                axios({
+                    method: "GET",
+                    url: '../student/getInLine.do?id='+this.selectId
+                }).then((res) => {
+                    if(res.data==1){
+                        alert("排队成功");
+                        this.showData();
+                    }
+                }).catch(function (err) {
+                    console.log(err);
+                    alert("排队失败，请稍候尝试");
+                });
+            },
+            toPrivateInfo:function () {
+                window.location.href="../student/stuInfo.html";
             }
         }
     });
