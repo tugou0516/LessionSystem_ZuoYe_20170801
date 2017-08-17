@@ -7,10 +7,10 @@ import org.forten.zuoye.dao.HibernateDao;
 import org.forten.zuoye.dao.MyBatisDao;
 import org.forten.zuoye.dto.common.Message;
 import org.forten.zuoye.dto.common.RoWithPage;
-import org.forten.zuoye.dto.course.CQo;
 import org.forten.zuoye.dto.course.Course4ShowDto;
 import org.forten.zuoye.dto.course.Course4StuShowRo;
-import org.forten.zuoye.dto.course.CourseId;
+import org.forten.zuoye.dto.course.CourseIdDto;
+import org.forten.zuoye.dto.course.CourseQo4Stu;
 import org.forten.zuoye.dto.student.Student4ShowRo;
 import org.forten.zuoye.mapper.StudentMapper;
 import org.forten.zuoye.model.Course;
@@ -149,8 +149,7 @@ public class StudentBo {
     }
 
     @Transactional
-    public RoWithPage<Course4ShowDto> listAll(CQo qo){
-        int id=1;
+    public RoWithPage<Course4ShowDto> doListAll(CourseQo4Stu qo ,int id){
         //选出未修过课程的ID
         String noSelectHql = "SELECT courseId FROM LinedCS WHERE chooseStatus=4 AND studentId=:id ";
         Map<String, Object> param1 = new HashMap<>(1);
@@ -178,18 +177,14 @@ public class StudentBo {
             List<Course4ShowDto> courseList = hDao.findBy(hql, param2, (int) page.getFirstResultNum(), page.getPageSize());
 
             //选出课程状态
-            String selectedHql = "SELECT new org.forten.zuoye.dto.course.CourseId(courseId,chooseStatus) FROM LinedCS WHERE studentId= :id ";
-            List<CourseId> selectedCourse = hDao.findBy(selectedHql, param1);
+            String selectedHql = "SELECT new org.forten.zuoye.dto.course.CourseIdDto(courseId,chooseStatus) FROM LinedCS WHERE studentId= :id ";
+
+            List<CourseIdDto> selectedCourse = hDao.findBy(selectedHql, param1);
 
             for (Course4ShowDto x : courseList) {
-                for (CourseId i : selectedCourse) {
-                    if (i.getCourseId() == x.getCourseId()) {
+                for (CourseIdDto i : selectedCourse) {
+                    if (i.getCourseId() == x.getId()) {
                         x.setChooseStatus(i.getChooseStatus());
-                        if (i.getChooseStatus() == 1) {
-                            x.setChoose(false);
-                        } else {
-                            x.setChoose(true);
-                        }
                     }
                 }
             }
