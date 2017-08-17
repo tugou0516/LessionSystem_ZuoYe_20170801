@@ -3,15 +3,15 @@ package org.forten.zuoye.dto.course;
 /**
  * Created by student3 on 2017/8/15.
  */
-public class CourseId {
+public class CourseIdDto {
     private int courseId;
     private int chooseStatus;
 
-    public CourseId(int courseId) {
+    public CourseIdDto(int courseId) {
         this.courseId = courseId;
     }
 
-    public CourseId(int courseId, int chooseStatus) {
+    public CourseIdDto(int courseId, int chooseStatus) {
         this.courseId = courseId;
         this.chooseStatus = chooseStatus;
     }
@@ -34,7 +34,7 @@ public class CourseId {
 
     @Override
     public String toString() {
-        return "CourseId{" +
+        return "CourseIdDto{" +
                 "courseId=" + courseId +
                 ", chooseStatus=" + chooseStatus +
                 '}';
