@@ -36,6 +36,18 @@ public class Student4ShowRo {
         this.email = email;
     }
 
+    public Student4ShowRo(int id, String loginName, String name, String gender, String position, Date birthday, String tel, String email) {
+        this.id = id;
+        this.loginName = loginName;
+        this.password = null;
+        this.name = name;
+        this.gender = gender;
+        this.position = position;
+        this.birthday = birthday;
+        this.tel = tel;
+        this.email = email;
+    }
+
     public String getPassword() {
         return password;
     }
