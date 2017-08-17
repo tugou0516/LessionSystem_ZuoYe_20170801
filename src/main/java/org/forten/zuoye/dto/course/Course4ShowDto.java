@@ -5,6 +5,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
+import static org.forten.utils.common.DateUtil.DATETIME_PATTERN;
+import static org.forten.utils.common.DateUtil.currentTime;
+
 /**
  * Created by student3 on 2017/8/9.
  */
@@ -75,7 +78,7 @@ public class Course4ShowDto {
         this.classCapacity = classCapacity;
     }
 
-    public int getCourseId() {
+    public int getId() {
         return id;
     }
 
@@ -163,30 +166,44 @@ public class Course4ShowDto {
         this.chooseStatus = chooseStatus;
     }
 
-    public boolean isChoose() {
-        return isChoose;
+    public void setIsChoose(boolean choose) {
+        this.isChoose = choose;
     }
 
-    public void setChoose(boolean choose) {
-        isChoose = choose;
+    public boolean getIsChoose() {
+        if((courseEndTime.getTime()-currentTime().getTime())<0||chooseStatus==1||chooseStatus==2)
+            return false;
+        else
+            return true;
     }
 
+    public String getChooseStatusStr(){
+        if ((courseEndTime.getTime()-currentTime().getTime())<0){
+            return "超出选课时间";
+        }
+        else if(chooseStatus==1)
+            return "已选";
+        else if(chooseStatus==2)
+            return "排队中";
+        else
+            return "可选";
+    }
 
 
     public String getCourseStartTimeStr() {
-        return DateUtil.convertDateToString(courseStartTime, "yyyy年MM月dd日 HH:mm:ss");
+        return DateUtil.convertDateToString(courseStartTime,DATETIME_PATTERN);
     }
 
     public String getCourseEndTimeStr() {
-        return DateUtil.convertDateToString(courseStartTime, "yyyy年MM月dd日 HH:mm:ss");
+        return DateUtil.convertDateToString(courseEndTime, DATETIME_PATTERN);
     }
 
     public String getClassStartTimeStr() {
-        return DateUtil.convertDateToString(courseStartTime, "yyyy年MM月dd日 HH:mm:ss");
+        return DateUtil.convertDateToString(classStartTime, DATETIME_PATTERN);
     }
 
     public String getClassEndTimeStr() {
-        return DateUtil.convertDateToString(courseStartTime, "yyyy年MM月dd日 HH:mm:ss");
+        return DateUtil.convertDateToString(classEndTime, DATETIME_PATTERN);
     }
 
     @Override
