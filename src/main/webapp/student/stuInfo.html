@@ -9,7 +9,8 @@
 <div id="stu-info">
     <button type="button" @click="showStuInfo">基本信息</button>
     <button type="button" @click="showCouInfo">课程信息</button>
-    <div id="private-info"  :hidden="pShowFlag">
+
+     <div id="private-info"  :hidden="pShowFlag">
     <table border="1">
         <tbody>
         <tr>
@@ -74,6 +75,7 @@
         </tr>
         </tbody>
         </table>
+            <button type="button" @click="toAllCourse">选课</button>
             <button type="button" @click="del">退课</button>
         </div>
         <div :hidden="completedFlag">
@@ -212,6 +214,9 @@
                 }else{
                     alert("请选择要被删除的数据!");
                 }
+            },
+            toAllCourse:function () {
+                window.location.href="../course/courseList.html";
             }
 
         }
