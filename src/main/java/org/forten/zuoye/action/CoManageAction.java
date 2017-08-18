@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by student1 on 2017/8/15.
@@ -27,7 +29,9 @@ public class CoManageAction {
     }
 
     @RequestMapping("delByIds")
-    public @ResponseBody Message delByIds(@RequestBody int[] ids){
-        return bo.doDeleteCourse(ids);
+    public @ResponseBody Message delByIds(@RequestBody Integer... ids){
+        System.out.println(ids);
+        List<Integer> list = Arrays.asList(ids);
+        return bo.doDeleteCourse(list);
     }
 }

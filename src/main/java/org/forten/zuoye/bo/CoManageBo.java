@@ -94,11 +94,11 @@ public class CoManageBo {
 
     //删除课程
     @Transactional
-    public Message doDeleteCourse(int[] ids){
+    public Message doDeleteCourse(List<Integer> list){
         try{
             String hql = "DELETE FROM org.forten.zuoye.model.Course WHERE id IN (:arr) ";
             Map<String,Object> map = new HashMap<>();
-            map.put("arr",ids);
+            map.put("arr",list);
             int n = hDao.executeUpdate(hql,map);
             return new Message("成功删除"+n+"个课程");
         }

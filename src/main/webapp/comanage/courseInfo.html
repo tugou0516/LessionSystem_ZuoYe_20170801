@@ -35,7 +35,7 @@
         <label>授课教师 </label><input placeholder="授课教师关键字" v-model="qo.teacher"><br/>
         <label>开课时间 </label><input type="date" placeholder="开课时间-起" v-model="qo.classStartTime">
         <input type="date" placeholder="开课时间-止" v-model="qo.classEndTime"><br/>
-        <input type="checkbox" v-model="qo.isFinished">显示已结束的课程<br/>
+        <input type="checkbox" v-model="qo.finished">显示已结束的课程<br/>
         <button @click="select">查询</button>
         <button @click="clear">重置</button>
     </div>
@@ -56,7 +56,7 @@
                 <th>学分</th>
                 <th>课容量</th>
                 <th>课程状态</th>
-                <th>报名情况</th>
+                <th>学员情况</th>
             </tr>
         </thead>
         <tbody>
@@ -92,9 +92,10 @@
     </table>
 </div>
 <div class="module" id="addAndDel">
-    <button>添加课程</button>
     <button id="delCheckBtn" @click="delCheck">删除课程</button>
     <button id="delDoBtn" hidden="hidden" @click="delDo">确认删除</button>
+    <button id="delCancelBtn" hidden="hidden" @click="delCancel">取消</button><br/>
+    <button class="module">添加课程</button>
 </div>
 
 <script src="../js/jquery-3.2.1.js"></script>
@@ -147,7 +148,8 @@
         data:{
             qo:{
                 pageNo:1,
-                pageSize:5
+                pageSize:5,
+                finished:false
             },
             courses:[],
             checkedCourses:[],
@@ -159,6 +161,11 @@
         },
         methods:{
             select:function () {
+                $('#delCheckBtn').removeAttr("hidden");
+                $('#delDoBtn').attr("hidden","hidden");
+                $('#delCancelBtn').attr("hidden","hidden");
+                $('.check').attr("hidden","hidden");
+                this.checkedCourses = [];
                 console.log(this.qo);
                 axios({
                     method:"POST",
@@ -188,30 +195,6 @@
                     })
                 }
             },
-            delCheck:function () {
-                $('#delCheckBtn').attr("hidden","hidden");
-                $('#delDoBtn').removeAttr("hidden");
-                $('.check').removeAttr("hidden");
-            },
-            delDo:function () {
-                if(confirm("确认删除所选的课程？")){
-                    console.log(this.checkedCourses);
-                    axios({
-                        method:"POST",
-                        url:"delByArray.do",
-                        data:this.checkedCourses
-                    }).then(function (res) {
-                        alert("成功删除"+res.data+"条数据");
-                    }).catch(function (err) {
-                        alert("删除出错："+err);
-                    });
-                }
-                $('#delCheckBtn').removeAttr("hidden");
-                $('#delDoBtn').attr("hidden","hidden");
-                $('.check').attr("hidden","hidden");
-                vm01.checkedCourses = [];
-                vm01.select();
-            },
             changePage:function (page) {
                 if(page>this.page.totalPage){
                     page = this.page.totalPage;
@@ -225,6 +208,44 @@
         },
         created:function () {
             this.select();
+        }
+    });
+    var vm02 = new Vue({
+        el:'#addAndDel',
+        methods:{
+            delCheck:function () {
+                $('#delCheckBtn').attr("hidden","hidden");
+                $('#delDoBtn').removeAttr("hidden");
+                $('#delCancelBtn').removeAttr("hidden");
+                $('.check').removeAttr("hidden");
+            },
+            delDo:function () {
+                if(confirm("确认删除所选的课程？")){
+                    console.log(vm01.checkedCourses);
+                    axios({
+                        method:"POST",
+                        url:"delByIds.do",
+                        data:vm01.checkedCourses
+                    }).then(function (res) {
+                        alert(res.data.message);
+                    }).catch(function (err) {
+                        alert("删除出错："+err);
+                    });
+                }
+                $('#delCheckBtn').removeAttr("hidden");
+                $('#delDoBtn').attr("hidden","hidden");
+                $('#delCancelBtn').attr("hidden","hidden");
+                $('.check').attr("hidden","hidden");
+                vm01.checkedCourses = [];
+                vm01.select();
+            },
+            delCancel:function () {
+                $('#delCheckBtn').removeAttr("hidden");
+                $('#delDoBtn').attr("hidden","hidden");
+                $('#delCancelBtn').attr("hidden","hidden");
+                $('.check').attr("hidden","hidden");
+                vm01.checkedCourses = [];
+            }
         }
     });
 </script>
