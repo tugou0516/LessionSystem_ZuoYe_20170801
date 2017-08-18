@@ -25,7 +25,6 @@ public class CourseQo {
         this.classStartTime = calendar.getTime();
         calendar.set(2500,12,31);
         this.classEndTime = calendar.getTime();
-        this.isFinished = true;//TODO
     }
 
     public String getName() {
@@ -78,6 +77,10 @@ public class CourseQo {
 
     public boolean isFinished() {
         return isFinished;
+    }
+
+    public void setFinished(boolean finished) {
+        isFinished = finished;
     }
 
     @Override

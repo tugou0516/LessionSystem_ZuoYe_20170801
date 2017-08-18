@@ -21,8 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.forten.utils.system.BeanPropertyUtil;
 
 import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -69,7 +67,7 @@ public class StudentBo {
         Date nowDate = new Date();
         Date pastDate = getPastDate();
 
-        String hql01 = "SELECT courseId FROM org.forten.zuoye.model.LinedCS WHERE studentId=:stuId AND chooseStatus!=3 AND chooseCourseTime BETWEEN :past AND :now ";
+        String hql01 = "SELECT courseId FROM org.forten.zuoye.model.LinedCS WHERE studentId=:stuId AND chooseStatus IN (1,4) AND chooseCourseTime BETWEEN :past AND :now ";
         Map<String,Object> map01 = new HashMap<>();
         map01.put("stuId",stuId);
         map01.put("past",pastDate);
@@ -107,6 +105,53 @@ public class StudentBo {
         }
     }
 
+    //退课后排队学生自动选中
+    @Transactional
+        private int updateCourse(LinedCS cs, int coId){
+
+        int stuId =cs.getStudentId();
+        Date nowDate = new Date();
+        Date pastDate = getPastDate();
+
+        String hql01 = "SELECT courseId FROM org.forten.zuoye.model.LinedCS WHERE studentId=:stuId AND chooseStatus!=3 AND chooseCourseTime BETWEEN :past AND :now ";
+        Map<String,Object> map01 = new HashMap<>();
+        map01.put("stuId",stuId);
+        map01.put("past",pastDate);
+        map01.put("now",nowDate);
+        List<Integer> list = hDao.findBy(hql01,map01);
+
+        int sumScore = 0;
+        //hql01和hql02不能合并为一句查询语句，因为list可能为空。如果list为空，语句就会报错
+        if(list.size()>0) {
+            String hql02 = "SELECT sum(score) FROM org.forten.zuoye.model.Course WHERE id IN (:arr) ";
+            Map<String, Object> map02 = new HashMap<>();
+            map02.put("arr", list);
+            List<Integer> resultList01 = hDao.findBy(hql02, map02);
+            sumScore = Integer.parseInt(String.valueOf(resultList01.get(0)));
+        }
+
+        String hql03 = "SELECT count(id) FROM org.forten.zuoye.model.LinedCS WHERE courseId=:coId AND chooseStatus=1";
+        Map<String,Object> map03 = new HashMap<>();
+        map03.put("coId",coId);
+        List<?> resultList02 = hDao.findBy(hql03,map03);
+        int chosenNum = Integer.parseInt(String.valueOf(resultList02.get(0)));
+
+        Course course = hDao.getById(coId,Course.class);
+
+        if(chosenNum < course.getClassCapacity()){
+            int limitScore = NumberUtil.parseNumber(PropertiesFileReader.getValue("properties/settings","SCORE_LIMIT"),Integer.class);
+            if((course.getScore() + sumScore)>limitScore){
+                return 3;
+            }else {
+                cs.setChooseStatus(1);
+                cs.setUpadteTime(new Date());
+                return updateCS(cs);
+            }
+        }else {
+            return 2;
+        }
+    }
+
     @Transactional
     //回传1代表排队成功，0代表后台操作失败
     public int getInLine(int stuId, int coId){
@@ -125,6 +170,18 @@ public class StudentBo {
         }
     }
 
+    private int updateCS(LinedCS cs){
+        try {
+            hDao.update(cs);
+            return 1;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+
+
     private Date getPastDate(){
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
@@ -142,8 +199,10 @@ public class StudentBo {
         params.put("id",id);
         params.put("ids", Arrays.asList(ids));
         int tag=hDao.executeUpdate(hql,params);
-        if(tag!=0)
+        if(tag!=0){
+            changeStatus(ids);
             return new Message("退课成功");
+        }
         else
             return new Message("退课失败");
     }
@@ -189,6 +248,21 @@ public class StudentBo {
                 }
             }
             return new RoWithPage<>(courseList, page);
+        }
+    }
+
+    @Transactional
+    public void changeStatus (Integer ...ids) {
+        for (int i = 0; i < ids.length; i++) {
+            String hql = "SELECT new org.forten.zuoye.model.LinedCS(id,studentId,chooseCourseTime,updateTime,courseId,chooseStatus,attendanceStatus) FROM LinedCS WHERE chooseStatus=2 AND courseId=:couId ";
+            Map<String, Object> param = new HashMap<>(1);
+            param.put("couId", ids[i]);
+            List<LinedCS> students=hDao.findBy(hql, param);
+
+            for (LinedCS cs : students) {
+                System.out.println(cs);
+                updateCourse(cs,ids[i]);
+            }
         }
     }
 
