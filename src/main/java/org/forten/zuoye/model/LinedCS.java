@@ -41,6 +41,16 @@ public class LinedCS {
         this.attendanceStatus = attendanceStatus;
     }
 
+    public LinedCS(int id, int studentId, Date chooseCourseTime, Date updateTime, int courseId, int chooseStatus, int attendanceStatus) {
+        this.id = id;
+        this.studentId = studentId;
+        this.chooseCourseTime = chooseCourseTime;
+        this.updateTime = updateTime;
+        this.courseId = courseId;
+        this.chooseStatus = chooseStatus;
+        this.attendanceStatus = attendanceStatus;
+    }
+
     public int getId() {
         return id;
     }
