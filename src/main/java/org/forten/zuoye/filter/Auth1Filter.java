@@ -20,7 +20,7 @@ import org.forten.zuoye.dto.student.LoginStudent;
  * 拦截要访问stident路径下所有资源和根路径下index.html的请求
  * 校验其是否已经通过登录
  */
-@WebFilter(urlPatterns={"/comanage/*","/course/*"})
+//@WebFilter(urlPatterns={"/comanage/*","/course/*"})
 public class Auth1Filter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
