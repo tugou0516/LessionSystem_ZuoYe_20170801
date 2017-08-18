@@ -33,6 +33,7 @@ public class CoManageBo {
 
     @Transactional
     public RoWithPage<Course4CoManageRo> selectBy(CourseQo qo){
+        System.out.println(qo);
         String countHql = "SELECT count(id) FROM Course WHERE 1=1 ";
         String hql = "SELECT new org.forten.zuoye.dto.course.Course4CoManageRo(id, name, classRoom, teacher, courseStartTime, courseEndTime, classStartTime, classEndTime, score, classCapacity) FROM Course WHERE 1=1 ";
         Map<String,Object> map = new HashMap<>();
@@ -48,8 +49,6 @@ public class CoManageBo {
             map.put("t","%"+qo.getTeacher()+"%");
         }
 
-        System.out.println(qo.getClassStartTime());
-        System.out.println(qo.getClassEndTime());
         if(qo.getClassStartTime()!=null && qo.getClassEndTime()!=null){
             countHql = countHql + "AND classStartTime BETWEEN :start AND :end ";
             hql = hql + "AND classStartTime BETWEEN :start AND :end ";
@@ -61,18 +60,7 @@ public class CoManageBo {
                 map.put("end",qo.getClassStartTime());
             }
         }
-        /*if(qo.getClassStartTime()!=null && qo.getClassEndTime()==null){
-            countHql = countHql + "AND classStartTime>=:st ";
-            hql = hql + "AND classStartTime>=:st ";
-            map.put("st",qo.getClassStartTime());
-        }
-        if(qo.getClassStartTime()==null && qo.getClassEndTime()!=null){
-            countHql = countHql + "AND classStartTime<=:st ";
-            hql = hql + "AND classStartTime<=:st ";
-            map.put("st",qo.getClassEndTime());
-        }*/
-        System.out.println(qo.isFinished());
-        if(qo.isFinished() == false){
+        if(!qo.isFinished()){
             Date now = new Date();
             countHql = countHql + "AND classEndTime>:et ";
             hql = hql + "AND classEndTime>:et ";

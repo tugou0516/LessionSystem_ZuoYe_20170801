@@ -67,7 +67,7 @@ public class StudentBo {
         Date nowDate = new Date();
         Date pastDate = getPastDate();
 
-        String hql01 = "SELECT courseId FROM org.forten.zuoye.model.LinedCS WHERE studentId=:stuId AND chooseStatus!=3 AND chooseCourseTime BETWEEN :past AND :now ";
+        String hql01 = "SELECT courseId FROM org.forten.zuoye.model.LinedCS WHERE studentId=:stuId AND chooseStatus IN (1,4) AND chooseCourseTime BETWEEN :past AND :now ";
         Map<String,Object> map01 = new HashMap<>();
         map01.put("stuId",stuId);
         map01.put("past",pastDate);
