@@ -142,6 +142,23 @@ public class CoManageBo {
             param.put("name","%"+qo.getName()+"%");
         }
 
+        if(qo.getFlag()==1){
+            countHql = countHql + "AND l.chooseStatus=1 ";
+            hql = hql + "AND l.chooseStatus=1 ";
+        }
+        if(qo.getFlag()==2){
+            countHql = countHql + "AND l.chooseStatus=2 ";
+            hql = hql + "AND l.chooseStatus=2 ";
+        }
+        if(qo.getFlag()==3){
+            countHql = countHql + "AND l.chooseStatus=3 ";
+            hql = hql + "AND l.chooseStatus=3 ";
+        }
+        if(qo.getFlag()==4){
+            countHql = countHql + "AND l.chooseStatus=4 ";
+            hql = hql + "AND l.chooseStatus=4 ";
+        }
+
         long count=hDao.findOneBy(countHql,param);
         if (count==0)
             return RoWithPage.EMPTY_RO;
