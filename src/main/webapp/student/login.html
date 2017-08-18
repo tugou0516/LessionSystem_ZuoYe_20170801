@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户登录</title>
+    <link rel="stylesheet" href="../css/bootstrap.css"/>
+    <link rel="stylesheet" href="../css/jquery-ui.css"/>
+</head>
+<body>
+<div class="container" id="table">
+    <div>
+        <ul>
+            <li><a href="#tabs">学员登录</a></li>
+            <li><a href="#tabs01">人事登录</a></li>
+            <li><a href="#tabs02">继教登录</a></li>
+        </ul>
+    </div>
+    <div id="tabs">
+        <form class="col-lg-6 col-lg-offset-3" id="login-form">
+            <div>
+                <label class="btn-block"style="color: #1b2a28">登录名</label> <input class="form-control" id="name" name="name" id="name"/>
+            </div>
+            <div>
+                <label class="btn-block" style="color: #1b2a28">密码</label> <input class="form-control" id="password" type="password" name="password" />
+            </div>
+            <div class="row form-group">
+                <div class="col-lg-6">
+                    <button class="btn btn-success" type="button" id="login">登录</button>
+                    <button class="btn btn-warning" type="reset" id="reset">重置</button>
+                </div>
+                <div class="col-lg-6 text-right">
+                    <a href="forgetpwd.html">忘记密码?</a>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div id="tabs01">
+        <form class="col-lg-6 col-lg-offset-3" id="login-form-renshi">
+            <div>
+                <label class="btn-block"style="color: #f2321d">登录名</label> <input class="form-control" id="renshiname" name="name" />
+            </div>
+            <div>
+                <label class="btn-block" style="color: #dc2e10">密码</label> <input class="form-control" id="renshipassword" type="password" name="password" />
+            </div>
+            <div class="row form-group">
+                <div class="col-lg-6">
+                    <button class="btn btn-success" type="button" id="login01">登录</button>
+                    <button class="btn btn-warning" type="reset" id="reset01">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div id="tabs02">
+        <form class="col-lg-6 col-lg-offset-3" id="login-form-jijiao" action="login02.do" method="post">
+            <div>
+                <label class="btn-block"style="color: #78c8e3">登录名</label> <input class="form-control"  name="name" id="jijiaoname"/>
+            </div>
+            <div>
+                <label class="btn-block" style="color: #93c3e1">密码</label> <input class="form-control" id="jijiaopassword" type="password" name="password" />
+            </div>
+            <div class="row form-group">
+                <div class="col-lg-6">
+                    <button class="btn btn-success" type="button" id="login02">登录</button>
+                    <button class="btn btn-warning" type="reset" id="reset02">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="../js/jquery-3.2.1.js"></script>
+<script src="../js/jquery-ui.js"></script>
+<script src="../js/commons.js"></script>
+<script src="../js/sha1.js"></script>
+<script>
+    $(function () {
+        $("#table").tabs();
+        function runEffect() {
+            var selectedEffect = 'explode';
+            $( "#table" ).effect( selectedEffect,500);
+        };
+        function runEffect01() {
+            var selectedEffect = 'clip';
+            $( "#table" ).effect( selectedEffect,500);
+        };
+        function runEffect02() {
+            var selectedEffect = 'drop';
+            $( "#table" ).effect( selectedEffect,500);
+        };
+        $( "#login" ).on( "click", function() {
+            runEffect();
+            return false;
+        });
+        $( "#login01" ).on( "click", function() {
+            runEffect01();
+            return false;
+        });
+        $( "#login02" ).on( "click", function() {
+            runEffect02();
+            return false;
+        });
+
+//    $("#login-form").on('click', function () {
+//        var pwdInput = $('#password');
+//        var pwd = hex_sha1(pwdInput.val());
+//        pwdInput.val(pwd);
+//    });
+        $('#login').on('click',function(){
+            var formData = {};
+            var inputs = $('#login-form').serializeArray();
+            $.each(inputs,function(index,input){
+                formData[input.name] = input.value;
+            });
+            var dataJson = JSON.stringify(formData);
+
+            $.ajax({
+                url: 'login.do',
+                type: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: dataJson
+            }).then(function(msg){
+               if(msg.message=='0'){
+                   alert('您输入的用户名或密码不正确,请重新输入');
+                   location.href="login.html";
+               }else{
+                   location.href="index.html";
+               }
+            },function(jqXhr,status,errorMsg){
+                alert("请求失败，请重试");
+            });
+        });
+        $('#login01').on('click',function(){
+            var formData = {};
+            var inputs = $('#login-form-renshi').serializeArray();
+            $.each(inputs,function(index,input){
+                formData[input.name] = input.value;
+            });
+            var dataJson = JSON.stringify(formData);
+
+            $.ajax({
+                url: 'login01.do',
+                type: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: dataJson
+            }).then(function(msg){
+                if(msg.message=='1'){
+                    alert('您输入的用户名或密码不正确,请重新输入');
+                    location.href="login.html";
+                }else{
+                    location.href="renshi.html";
+                }
+            },function(jqXhr,status,errorMsg){
+                alert("请求失败，请重试");
+            });
+        });
+        $('#login02').on('click',function(){
+            var formData = {};
+            var inputs = $('#login-form-jijiao').serializeArray();
+            $.each(inputs,function(index,input){
+                formData[input.name] = input.value;
+            });
+            var dataJson = JSON.stringify(formData);
+
+            $.ajax({
+                url: 'login02.do',
+                type: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: dataJson
+            }).then(function(msg){
+                if(msg.message=='1'){
+                    alert('您输入的用户名或密码不正确,请重新输入');
+                    location.href="login.html";
+                }else{
+                    location.href="jijiao.html";
+                }
+            },function(jqXhr,status,errorMsg){
+                alert("请求失败，请重试");
+            });
+        });
+    });
+</script>
+</body>
+</html>

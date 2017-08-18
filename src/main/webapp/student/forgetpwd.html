@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>忘记密码</title>
+    <link rel="stylesheet" href="../css/bootstrap.css"/>
+    <link rel="stylesheet" href="../css/jquery-ui.css"/>
+</head>
+<body>
+<div class="container" id="my-div">
+    <form id="myform" class="form-horizontal">
+        <h3>请输入您的用户名</h3>
+        <input v-model="name"/>
+        <button id="btn" type="button" @click="forgetPwd">确定</button>
+    </form>
+    <div id="msg">
+        {{msg}}
+    </div>
+</div>
+
+<script src="../js/jquery-3.2.1.js"></script>
+<script src="../js/jquery-ui.js"></script>
+<script src="../js/commons.js"></script>
+<script src="../js/vue.js"></script>
+<script src="../js/axios.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#my-div',
+        data: {
+            msg:'',
+            name:''
+        },
+        methods: {
+            forgetPwd: function () {
+                axios({
+                    method: "GET",
+                    url: 'forgetPwd.do?name='+this.name
+                }).then((res) => {
+                   vm.msg=res.data.message;
+                }).catch(function () {
+                    vm.msg="对不起请求失败";
+                });
+            }
+          }
+        });
+</script>
+</body>
+</html>
