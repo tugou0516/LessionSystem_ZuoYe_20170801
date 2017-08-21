@@ -32,10 +32,10 @@ public class LinedCS {
     public LinedCS() {
     }
 
-    public LinedCS(int studentId, Date chooseCourseTime, Date upadteTime, int courseId, int chooseStatus, int attendanceStatus) {
+    public LinedCS(int studentId, Date chooseCourseTime, Date updateTime, int courseId, int chooseStatus, int attendanceStatus) {
         this.studentId = studentId;
         this.chooseCourseTime = chooseCourseTime;
-        this.updateTime = upadteTime;
+        this.updateTime = updateTime;
         this.courseId = courseId;
         this.chooseStatus = chooseStatus;
         this.attendanceStatus = attendanceStatus;
@@ -75,12 +75,12 @@ public class LinedCS {
         this.chooseCourseTime = chooseCourseTime;
     }
 
-    public Date getUpadteTime() {
+    public Date getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpadteTime(Date upadteTime) {
-        this.updateTime = upadteTime;
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 
     public int getCourseId() {
@@ -123,7 +123,7 @@ public class LinedCS {
                 "id=" + id +
                 ", studentId=" + studentId +
                 ", chooseCourseTime=" + chooseCourseTime +
-                ", upadteTime=" + updateTime +
+                ", updateTime=" + updateTime +
                 ", courseId=" + courseId +
                 ", chooseStatus='" + chooseStatus + '\'' +
                 ", attendanceStatus='" + attendanceStatus + '\'' +
