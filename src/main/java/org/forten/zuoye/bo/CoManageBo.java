@@ -81,6 +81,24 @@ public class CoManageBo {
     //添加课程
     @Transactional
     public Message doSaveCourse(Dto4SaveCourse cou){
+        Date t1 = cou.getCourseStartTime();
+        Date t2 = cou.getCourseEndTime();
+        Date t3 = cou.getClassStartTime();
+        Date t4 = cou.getClassEndTime();
+        if(t1.after(t2)){
+            Date date = t1;
+            t1 = t2;
+            t2 = date;
+            cou.setCourseStartTime(t2);
+            cou.setCourseEndTime(t1);
+        }
+        if(t3.after(t4)){
+            Date date = t3;
+            t3 = t4;
+            t4 = date;
+            cou.setClassStartTime(t4);
+            cou.setClassEndTime(t3);
+        }
         Course course = new Course();
         BeanPropertyUtil.copy(course,cou);
         try {
