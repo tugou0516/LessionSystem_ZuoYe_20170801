@@ -144,7 +144,7 @@ public class StudentBo {
                 return 3;
             }else {
                 cs.setChooseStatus(1);
-                cs.setUpadteTime(new Date());
+                cs.setUpdateTime(new Date());
                 return updateCS(cs);
             }
         }else {
