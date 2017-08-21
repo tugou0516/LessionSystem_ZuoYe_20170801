@@ -5,6 +5,7 @@ import org.forten.zuoye.dto.common.Message;
 import org.forten.zuoye.dto.common.RoWithPage;
 import org.forten.zuoye.dto.course.Course4CoManageRo;
 import org.forten.zuoye.dto.course.CourseQo;
+import org.forten.zuoye.dto.course.Dto4SaveCourse;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,5 +34,10 @@ public class CoManageAction {
         System.out.println(ids);
         List<Integer> list = Arrays.asList(ids);
         return bo.doDeleteCourse(list);
+    }
+
+    @RequestMapping("saveCourse")
+    public @ResponseBody Message saveCourse(@RequestBody Dto4SaveCourse course){
+        return bo.doSaveCourse(course);
     }
 }
