@@ -6,6 +6,7 @@ import org.forten.utils.system.PropertiesFileReader;
  * Created by Administrator on 2017/7/4.
  */
 public class CourseStudentQo {
+    private int flag;
     private String loginName;
     private String name;
     private int pageNo;
@@ -13,15 +14,33 @@ public class CourseStudentQo {
 
     public CourseStudentQo() {
         this.pageNo = 1;
-        this.pageSize = 5;
+        this.pageSize = 10;
     }
 
     public CourseStudentQo(String loginName, String name) {
+        this.flag=0;
         this.loginName = loginName;
         this.name = name;
         this.pageNo = 1;
-        this.pageSize = 5;
+        this.pageSize = 10;
     }
+
+    public CourseStudentQo(int flag, String loginName, String name) {
+        this.flag = flag;
+        this.loginName = loginName;
+        this.name = name;
+        this.pageNo = 1;
+        this.pageSize = 10;
+    }
+
+    public int getFlag() {
+        return flag;
+    }
+
+    public void setFlag(int flag) {
+        this.flag = flag;
+    }
+
     public String getLoginName() {
         return loginName;
     }
@@ -56,8 +75,9 @@ public class CourseStudentQo {
 
     @Override
     public String toString() {
-        return "StudentQo{" +
-                "loginName='" + loginName + '\'' +
+        return "CourseStudentQo{" +
+                "flag=" + flag +
+                ", loginName='" + loginName + '\'' +
                 ", name='" + name + '\'' +
                 ", pageNo=" + pageNo +
                 ", pageSize=" + pageSize +
