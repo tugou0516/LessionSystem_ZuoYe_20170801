@@ -4,12 +4,15 @@ import org.forten.zuoye.bo.CoManageBo;
 import org.forten.zuoye.dto.common.Message;
 import org.forten.zuoye.dto.common.RoWithPage;
 import org.forten.zuoye.dto.course.Course4CoManageRo;
+import org.forten.zuoye.dto.course.CourseId;
 import org.forten.zuoye.dto.course.CourseQo;
 import org.forten.zuoye.dto.course.Dto4SaveCourse;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
@@ -20,6 +23,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/comanage/")
+@SessionAttributes({"courseId"})
 public class CoManageAction {
     @Resource
     private CoManageBo bo;
@@ -40,4 +44,13 @@ public class CoManageAction {
     public @ResponseBody Message saveCourse(@RequestBody Dto4SaveCourse course){
         return bo.doSaveCourse(course);
     }
+
+    //课程学生信息
+    @RequestMapping("courseStudent")
+    public String RedirectCourseStudent(int id,Model model){
+       CourseId couId =new CourseId(id);
+       model.addAttribute("courseId",couId);
+       return "redirect:CourseStudentList.html";
+    }
+
 }
