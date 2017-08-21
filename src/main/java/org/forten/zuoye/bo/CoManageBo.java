@@ -142,6 +142,8 @@ public class CoManageBo {
             param.put("name","%"+qo.getName()+"%");
         }
 
+        //1已选，2排队，3退课，4已修
+
         if(qo.getFlag()==1){
             countHql = countHql + "AND l.chooseStatus=1 ";
             hql = hql + "AND l.chooseStatus=1 ";
