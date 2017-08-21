@@ -78,7 +78,7 @@
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="12">
+                <td colspan="12" style="text-align: center">
                     <button @click="changePage(1)">首页</button>
                     <button @click="changePage(qo.pageNo-1)">上一页</button>
                     <span>{{page.pageNo}} / {{page.totalPage}}</span>
@@ -92,15 +92,37 @@
     </table>
 </div>
 <div class="module" id="addAndDel">
-    <button id="delCheckBtn" @click="delCheck">删除课程</button>
-    <button id="delDoBtn" hidden="hidden" @click="delDo">确认删除</button>
-    <button id="delCancelBtn" hidden="hidden" @click="delCancel">取消</button><br/>
-    <button class="module">添加课程</button>
+    <div>
+        <button id="delCheckBtn" @click="delCheck">删除课程</button>
+        <button id="delDoBtn" hidden="hidden" @click="delDo">确认删除</button>
+        <button id="delCancelBtn" hidden="hidden" @click="delCancel">取消</button><br/>
+        <button class="module" @click="function(){showAddForm = !showAddForm}">{{showAddForm? "取消添加":"添加课程"}}</button>
+    </div>
+    <div>
+        <form id="addForm" v-if="showAddForm">
+            <label>课程名称 </label><input id="name" v-model="addCourse.name" name="name" value=""><br/>
+            <label>上课教室 </label><input id="classRoom" v-model="addCourse.classRoom" name="classRoom"><br/>
+            <label>授课老师 </label><input v-model="addCourse.teacher" class="teacher"><br/>
+            <label>选课起止时间 </label><input v-model="addCourse.courseStartTime" type="datetime-local" name="t1">
+            <input v-model="addCourse.courseEndTime" type="datetime-local" name="t2"><br/>
+            <label>上课起止时间 </label><input v-model="addCourse.classStartTime" type="datetime-local" name="t3">
+            <input v-model="addCourse.classEndTime" type="datetime-local" name="t4"><br/>
+            <label>课程学分 </label><input v-model="addCourse.score" name="score"><br/>
+            <label>课程容量 </label><input v-model="addCourse.classCapacity" name="rl"><br/>
+            <div>
+                <button id="saveBtn" type="button">保存</button><!-- @click="saveCourse"-->
+                <button type="button" @click="function(){addCourse={} }">重置</button>
+            </div>
+        </form>
+    </div>
 </div>
 
-<script src="../js/jquery-3.2.1.js"></script>
 <script src="../js/vue.js"></script>
 <script src="../js/axios.js"></script>
+<script src="../js/jquery-3.2.1.js"></script>
+<script src="../js/jquery.validate.js"></script>
+<script src="../js/vue-validator.common.js"></script>
+<script src="../js/vue-validator.js"></script>
 <script>
     $(function () {
         Vue.filter('dateTime',function (value) {
@@ -141,7 +163,87 @@
             if(value>=t3){
                 return "已结课";
             }
-        })
+        });
+        $.validator.methods.timeCompare = function (value,element,param) {
+            //var startTimeStr = $(param).val();
+            var startTime = new Date(param).getTime();
+            var endTime = new Date(value).getTime();
+            return startTime<endTime;
+        }
+        $('#addForm').validate({
+            rules:{
+                name:{required:true},
+                rangelength:[2,6]
+                /*classRoom:{required:true},
+                teacher:{required:true},
+                t1:{required:true},
+                t2:{
+                    required:true,
+                    timeCompare:"#t1"
+                },
+                t3:{required:true},
+                t4:{
+                    required:true,
+                    timeCompare:"#t3"
+                },
+                score:{required:true},
+                rl:{required:true}*/
+            },
+            messages:{
+                name:{required:"不可为空",rangelength:"长度不符"}
+                /*classRoom:{required:"不可为空"},
+                teacher:{required:"不可为空"},
+                t1:{required:"不可为空"},
+                t2:{
+                    required:"不可为空",
+                    timeCompare:"结束时间不可早于开始时间"
+                },
+                t3:{required:"不可为空"},
+                t4:{
+                    required:"不可为空",
+                    timeCompare:"结束时间不可早于开始时间"
+                },
+                score:{required:"不可为空"},
+                rl:{required:"不可为空"}*/
+            }
+        });
+        $('#saveBtn').on('click',function () {
+            console.log($('#addForm').valid());
+            if($('#addForm').valid()){
+                vm02.saveCourse();
+            }
+        });
+        /*var addWithValid = function () {
+            console.log($('#addForm').valid());
+            if($('#addForm').valid()){
+                vm02.addCourse.courseStartTime = new Date(vm02.addCourse.courseStartTime).getTime();
+                vm02.addCourse.courseEndTime = new Date(vm02.addCourse.courseEndTime).getTime();
+                vm02.addCourse.classStartTime = new Date(vm02.addCourse.classStartTime).getTime();
+                vm02.addCourse.classEndTime = new Date(vm02.addCourse.classEndTime).getTime();
+                /!*if(this.addCourse.courseStartTime>this.addCourse.courseEndTime){
+                 alert("选课开始时间不能晚于结束时间");
+                 return;
+                 }
+                 if(this.addCourse.classStartTime>this.addCourse.classEndTime){
+                 alert("上课开始时间不能晚于结束时间");
+                 return;
+                 }*!/
+                console.log(vm02.addCourse);
+                axios({
+                    method:"POST",
+                    url:"saveCourse.do",
+                    data:vm02.addCourse
+                }).then(function (res) {
+                    alert(res.data.message);
+                    vm02.showAddForm = false;
+                    vm02.addCourse = {};
+                    vm01.select();
+                }).catch(function (err) {
+                    alert("保存出错："+err)
+                });
+            }
+        };*/
+
     });
     var vm01 = new Vue({
         el:'#courseList',
@@ -212,6 +314,10 @@
     });
     var vm02 = new Vue({
         el:'#addAndDel',
+        data:{
+            addCourse:{},
+            showAddForm:false
+        },
         methods:{
             delCheck:function () {
                 $('#delCheckBtn').attr("hidden","hidden");
@@ -228,6 +334,7 @@
                         data:vm01.checkedCourses
                     }).then(function (res) {
                         alert(res.data.message);
+                        vm01.select();
                     }).catch(function (err) {
                         alert("删除出错："+err);
                     });
@@ -237,7 +344,6 @@
                 $('#delCancelBtn').attr("hidden","hidden");
                 $('.check').attr("hidden","hidden");
                 vm01.checkedCourses = [];
-                vm01.select();
             },
             delCancel:function () {
                 $('#delCheckBtn').removeAttr("hidden");
@@ -245,6 +351,33 @@
                 $('#delCancelBtn').attr("hidden","hidden");
                 $('.check').attr("hidden","hidden");
                 vm01.checkedCourses = [];
+            },
+            saveCourse:function () {
+                vm02.addCourse.courseStartTime = new Date(vm02.addCourse.courseStartTime).getTime();
+                vm02.addCourse.courseEndTime = new Date(vm02.addCourse.courseEndTime).getTime();
+                vm02.addCourse.classStartTime = new Date(vm02.addCourse.classStartTime).getTime();
+                vm02.addCourse.classEndTime = new Date(vm02.addCourse.classEndTime).getTime();
+                /*if(this.addCourse.courseStartTime>this.addCourse.courseEndTime){
+                 alert("选课开始时间不能晚于结束时间");
+                 return;
+                 }
+                 if(this.addCourse.classStartTime>this.addCourse.classEndTime){
+                 alert("上课开始时间不能晚于结束时间");
+                 return;
+                 }*/
+                console.log(vm02.addCourse);
+                axios({
+                    method:"POST",
+                    url:"saveCourse.do",
+                    data:vm02.addCourse
+                }).then(function (res) {
+                    alert(res.data.message);
+                    vm02.showAddForm = false;
+                    vm02.addCourse = {};
+                    vm01.select();
+                }).catch(function (err) {
+                    alert("保存出错："+err)
+                });
             }
         }
     });
