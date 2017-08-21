@@ -6,40 +6,40 @@ import org.forten.utils.system.PropertiesFileReader;
  * Created by Administrator on 2017/7/4.
  */
 public class CourseStudentQo {
-//    private int selectClass;
+    private int flag;
     private String loginName;
     private String name;
     private int pageNo;
     private int pageSize;
 
     public CourseStudentQo() {
-//        this.selectClass=0;
         this.pageNo = 1;
-        this.pageSize = 5;
+        this.pageSize = 10;
     }
 
-//    public CourseStudentQo(int selectClass,String loginName, String name) {
-//        this.selectClass=selectClass;
-//        this.loginName = loginName;
-//        this.name = name;
-//        this.pageNo = 1;
-//        this.pageSize = 5;
-//    }
     public CourseStudentQo(String loginName, String name) {
-//        this.selectClass=0;
+        this.flag=0;
         this.loginName = loginName;
         this.name = name;
         this.pageNo = 1;
-        this.pageSize = 5;
+        this.pageSize = 10;
     }
 
-//    public int getSelectClass() {
-//        return selectClass;
-//    }
-//
-//    public void setSelectClass(int selectClass) {
-//        this.selectClass = selectClass;
-//    }
+    public CourseStudentQo(int flag, String loginName, String name) {
+        this.flag = flag;
+        this.loginName = loginName;
+        this.name = name;
+        this.pageNo = 1;
+        this.pageSize = 10;
+    }
+
+    public int getFlag() {
+        return flag;
+    }
+
+    public void setFlag(int flag) {
+        this.flag = flag;
+    }
 
     public String getLoginName() {
         return loginName;
@@ -76,7 +76,7 @@ public class CourseStudentQo {
     @Override
     public String toString() {
         return "CourseStudentQo{" +
-//                "selectClass=" + selectClass +
+                "flag=" + flag +
                 ", loginName='" + loginName + '\'' +
                 ", name='" + name + '\'' +
                 ", pageNo=" + pageNo +
