@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>选课情况列表</title>
+</head>
+<body>
+<div id="my-div">
+    <div>
+        <input type="radio" v-model="qo.flag"  :value=0 />全部
+        <input type="radio" v-model="qo.flag"  :value=1 />已选
+        <input type="radio" v-model="qo.flag"  :value=2 />排队
+        <input type="radio" v-model="qo.flag"  :value=3 />退课
+        <input type="radio" v-model="qo.flag"  :value=4 />已修
+    </div>
+    <div>
+    <table border="1" class="container">
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>学号</th>
+            <th>姓名</th>
+            <th>性别</th>
+            <th>职务</th>
+            <th>年龄</th>
+            <th>电话</th>
+            <th>E-mail</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(s,index) in studentList">
+            <td>{{index+1}}</td>
+            <td>{{s.loginName}}</td>
+            <td>{{s.name}}</td>
+            <td>{{s.gender}}</td>
+            <td>{{s.position}}</td>
+            <td>{{s.age}}</td>
+            <td>{{s.tel}}</td>
+            <td>{{s.email}}</td>
+        </tr>
+        </tbody>
+        <button type="button"  @click="goToStuExcel">签到表</button>
+    </table>
+    </div>
+    <div>
+        <span>第{{page.pageNo}}页/共{{page.totalPage}}页</span>
+        <span>第{{page.firstResultNum+1}}条~第{{page.lastResultNum}}条/共{{page.totalQuantity}}条</span>
+    </div>
+    <div><button @click="setPageNo(1)">首页</button>
+        <button @click="setPageNo(qo.pageNo-1)">上一页</button>
+        <input v-model="qo.pageNo" /><button @click="setPageNo(qo.pageNo)" type="button">跳转</button>
+        <button @click="setPageNo(qo.pageNo+1)">下一页</button>
+        <button @click="setPageNo(page.totalPage)">尾页</button>
+    </div>
+
+</div>
+
+<script src="../js/jquery-3.2.1.js"></script>
+<script src="../js/vue.js"></script>
+<script src="../js/axios.js"></script>
+<script src="../css/bootstrap.css"></script>
+<script>
+    var vm= new Vue({
+        el:'#my-div',
+        data:{
+            qo:{
+                flag:1,
+                pageNo:1,
+                pageSize:3
+                },
+            studentList:[],
+            page:{
+                pageNo:1,
+                pageSize:3
+                }
+            },
+            created: function () {
+                this.showData();
+            },
+//            mounted:function(){
+//                this.$nextTick(function(){
+//                    this.showData();
+//                });
+//            },
+            methods:{
+                showData: function () {
+                    alert(this.qo.flag);
+                    axios({
+                        method: "POST",
+                        url: 'courseStudentList.do',
+                        data:this.qo
+                    }).then((res) => {
+                        this.studentList=res.data.dataList;
+                        this.page=res.data.page;
+                    }).catch(function (err) {
+                        console.log(err);
+                    });
+                },
+                setPageNo:function (n) {
+                    if (n > this.page.totalPage) {
+                        n = this.page.totalPage;
+                    }
+                    if (n < 1) {
+                        n = 1;
+                    }
+                    this.qo.pageNo = n;
+                    this.showData();
+
+                },
+                goToStuExcel:function () {
+                    location.href="stuExcel.html";
+                }
+            },
+    });
+
+    vm.$watch('qo.flag', function () {
+        vm.showData();
+    });
+</script>
+</body>
+</html>
