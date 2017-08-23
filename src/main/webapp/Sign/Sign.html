@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>签到页面</title>
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="../css/jquery-ui.css">
+</head>
+<body>
+<div id="my-div">
+<div>
+<h3>学员课程出勤状态签到表</h3>
+</div>
+<div>
+    <table border="2">
+        <thead>
+        <tr>
+            <th hidden="hidden">ID</th>
+            <th hidden="hidden">课程ID</th>
+            <th>姓名</th>
+            <th>性别</th>
+            <th>手机号</th>
+            <th>出勤状态</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="stu in studentList">
+            <td hidden="hidden" id="stuId" v-model="stu.stuId" value="stu.id"></td>
+            <td hidden="hidden" id="courseId" v-model="stu.stuCsId" value="stu.courseId"></td>
+            <td>{{stu.name}}</td>
+            <td>{{stu.gender}}</td>
+            <td>{{stu.tel}}</td>
+            <td>
+                <lable style="color: #2694e8">签到</lable><input type="radio" name="status" v-model="stu.status" value="1" checked="checked">
+                <lable style="color: #2694e8">请假</lable><input type="radio" name="status" v-model="stu.status" value="2">
+                <lable style="color: #c0a16b">旷课</lable><input type="radio" name="status" v-model="stu.status" value="3">
+            </td>
+        </tr>
+        </tbody>
+        <tfoot>
+
+        </tfoot>
+    </table>
+    <div>
+        <span>第{{page.pageNo}}页/共{{page.totalPage}}页</span>
+        <span>第{{page.firstResultNum+1}}~{{page.lastResultNum}}条/共{{page.totalQuantity}}条数据</span>
+        <button @click="setPageNo(1)">首页</button>
+        <button @click="setPageNo(qo.pageNo-1)">上一页</button>
+        <input v-model="qo.pageNo" /><button @click="setPageNo(qo.pageNo)" type="button">跳转</button>
+        <button @click="setPageNo(qo.pageNo+1)">下一页</button>
+        <button @click="setPageNo(page.totalPage)">尾页</button>
+    </div>
+    <div>
+        <button class="btn btn-success" type="button" @click="submit">提交</button>
+        <button class="btn btn-success" type="button" @click="rest">重置</button>
+    </div>
+</div>
+</div>
+</body>
+<script src="../js/jquery-3.2.1.js"></script>
+<script src="../js/jquery-ui.js"></script>
+<script src="../js/vue.js"></script>
+<script src="../js/axios.js"></script>
+<script src="../js/commons.js"></script>
+<script>
+    var vm=new Vue({
+        el:'#my-div',
+        data: {
+            studentList:[],
+            checkedValue:[],
+            qo:{
+                pageNo:1,
+                pageSize:8
+            },
+            page:{
+                pageNo:1,
+                pageSize:8,
+            },
+            stu:[{
+                stuId:'',
+                stuCsId:'',
+                status:''
+            }],
+
+        },
+        methods: {
+            list: function () {
+                axios({
+                    url: '',
+                    method: 'POST',
+                    data: this.qo
+                }).then((res) => {
+                    if (res.data.isEmptyResult) {
+                        alert("未查询到数据，请重试...")
+                    }
+                    this.studentList = res.data.dataList;
+                    this.page = res.data.page;
+                });
+            },
+            setPageNo: function (n) {
+                if (n > this.page.totalPage) {
+                    n = this.page.totalPage;
+                }
+                if (n < 1) {
+                    n = 1;
+                }
+                this.qo.pageNo = n;
+                this.list();
+            },
+            submit: function(){
+                axios({
+                    url:'',
+                    method:'POST',
+                    data:this.student
+                }).then((msg) => {
+                    alert("提交成功");
+                }).catch(function () {
+                    alert("对不起请求失败，请重试或联系管理员");
+                });
+            },
+            rest:function () {
+                this.stu.status.value=[]
+            }
+        }
+    })
+</script>
+</html>

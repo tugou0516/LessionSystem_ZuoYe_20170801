@@ -17,6 +17,10 @@ public class CourseStudentQo {
         this.pageSize = 10;
     }
 
+    public CourseStudentQo(int flag) {
+        this.flag = flag;
+    }
+
     public CourseStudentQo(String loginName, String name) {
         this.flag=0;
         this.loginName = loginName;

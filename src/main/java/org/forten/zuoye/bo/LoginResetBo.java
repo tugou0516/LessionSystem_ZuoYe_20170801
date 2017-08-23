@@ -54,12 +54,12 @@ public class LoginResetBo {
         }
     }
     @Transactional(readOnly = true)
-        public LoginStudent login(String name, String password) {
-            String hql = "SELECT new org.forten.zuoye.dto.student.LoginStudent(id,name) FROM Student WHERE loginName=:xm AND password=:pwd";
+        public LoginedStudent login(String name, String password) {
+            String hql = "SELECT new org.forten.zuoye.dto.student.LoginedStudent(id,name,email) FROM Student WHERE loginName=:xm AND password=:pwd";
             Map<String, Object> params = new HashMap<>();
             params.put("xm", name);
             params.put("pwd", password);
-            LoginStudent dto = hDao.findOneBy(hql, params);
+            LoginedStudent dto = hDao.findOneBy(hql, params);
             return dto;
     }
     @Transactional
