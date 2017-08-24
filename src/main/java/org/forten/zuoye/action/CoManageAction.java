@@ -84,7 +84,7 @@ public class CoManageAction {
             e.printStackTrace();
         }
     }
-    @RequestMapping("update")
+    @RequestMapping("updateCourse")
     public Message update(@RequestBody CourseChangeDto dto){
         return bo.doUpdate(dto);
     }
