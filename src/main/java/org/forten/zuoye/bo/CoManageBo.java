@@ -1,5 +1,7 @@
 package org.forten.zuoye.bo;
 
+import org.apache.commons.mail.DefaultAuthenticator;
+import org.apache.commons.mail.HtmlEmail;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -9,12 +11,10 @@ import org.forten.utils.common.StringUtil;
 import org.forten.utils.system.BeanPropertyUtil;
 import org.forten.utils.system.PageInfo;
 import org.forten.zuoye.dao.HibernateDao;
+import org.forten.zuoye.dto.EmailDto;
 import org.forten.zuoye.dto.common.Message;
 import org.forten.zuoye.dto.common.RoWithPage;
-import org.forten.zuoye.dto.course.Course4CoManageRo;
-import org.forten.zuoye.dto.course.CourseQo;
-import org.forten.zuoye.dto.course.Dto4SaveCourse;
-import org.forten.zuoye.dto.course.Dto4UpdateCourse;
+import org.forten.zuoye.dto.course.*;
 import org.forten.zuoye.dto.student.CourseStudentQo;
 import org.forten.zuoye.dto.student.Student4ExcelShow;
 import org.forten.zuoye.dto.student.Student4ShowRo;
@@ -221,6 +221,65 @@ public class CoManageBo {
 
         return wb;
     }
-
-
+    @Transactional
+    public Message doUpdate(CourseChangeDto dto){
+        String hql= "UPDATE Course SET name=:name,teacher=:teacher,classRoom=:classRoom,courseStartTime=:courseStartTime,courseEndTime=:courseEndTime,classStateTime=:classStateTime,classEndTime=:classEndTime,score=:score WHERE id=:id";
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", dto.getId());
+        params.put("name", dto.getName());
+        params.put("teacher", dto.getTeacher());
+        params.put("classRoom", dto.getClassRoom());
+        params.put("courseStartTime", dto.getCourseStartTime());
+        params.put("courseEndTime", dto.getCourseEndTime());
+        params.put("classStateTime", dto.getClassStateTime());
+        params.put("classEndTime()", dto.getClassEndTime());
+        params.put("score", dto.getScore());
+        try {
+            hDao.executeUpdate(hql, params);
+            return new Message("数据更新成功");
+        }catch(Exception e){
+            e.printStackTrace();
+            return new Message("数据更新失败");
+        }
+    }
+    @Transactional
+    public Message sendEmail(EmailDto dto) {
+        String hql = "SELECT count(studentId) FROM LinedCS WHERE courseId=:id ";
+        Map<String, Object> params = new HashMap<>();
+        int id = dto.getId();
+        params.put("id", id);
+        long count = hDao.findOneBy(hql, params);
+        if (count == 0) {
+            return new Message("暂无学生选择此课");
+        }
+        String hql03 = "SELECT (s.email) " +
+                "FROM Student s RIGHT JOIN LinedCS l ON (s.id=l.studentId) WHERE l.courseId=:id ";
+        Map<String, Object> params02 = new HashMap<>();
+        params02.put("id", id);
+        List<String> list= hDao.findBy(hql03,params02);
+        StringBuilder sd= new StringBuilder();
+        for (String email :list) {
+            sd.append(email);
+            sd.append(",");
+        }
+        sd.replace(sd.length()-1,sd.length(),"");
+        new Thread(() -> {
+            try {
+                HtmlEmail email = new HtmlEmail();
+                email.setHostName("smtp.126.com");
+                email.setCharset("UTF-8");
+                email.setSmtpPort(465);
+                email.setAuthenticator(new DefaultAuthenticator("thcic_test", "a123456"));
+                email.setSSLOnConnect(true);
+                email.addTo(sd.toString());
+                email.setFrom("thcic_test@126.com", "System");
+                email.setSubject(dto.getTitle());
+                email.setHtmlMsg(dto.getTest());
+                email.send();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+        return new Message("课程更改的消息已经发送给已经选择此课程的学员Email中");
+    }
 }
