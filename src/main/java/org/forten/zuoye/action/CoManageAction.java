@@ -41,7 +41,6 @@ public class CoManageAction {
 
     @RequestMapping("delByIds")
     public @ResponseBody Message delByIds(@RequestBody Integer... ids){
-        System.out.println(ids);
         List<Integer> list = Arrays.asList(ids);
         return bo.doDeleteCourse(list);
     }
@@ -76,11 +75,39 @@ public class CoManageAction {
         int courseId =1;
         try(OutputStream out = response.getOutputStream(); Workbook wb = bo.exportData(courseId)){
             response.setContentType("application/x-msexcel");
-            response.setHeader("Content-Disposition","attachment;filename=签到表.xls");
+            response.setHeader("Content-Disposition","attachment;filename=student.xls");
             wb.write(out);
         }catch(IOException e){
             e.printStackTrace();
         }
+    }
+
+    //修改签到状态为旷课
+    @RequestMapping("changeAttendStatus1")
+    public @ResponseBody Message changeAttendStatus1(HttpSession session,@RequestBody Integer... ids){
+//      int courseId = (Integer) session.getAttribute("courseId");
+        int courseId =1;
+        List<Integer> list = Arrays.asList(ids);
+        int n=bo.changeAttendStatusToCQ(list,courseId);
+        return new Message("签到成功");
+    }
+    //修改签到状态为请假
+    @RequestMapping("changeAttendStatus2")
+    public @ResponseBody Message changeAttendStatus2(HttpSession session,@RequestBody Integer... ids){
+//      int courseId = (Integer) session.getAttribute("courseId");
+        int courseId =1;
+        List<Integer> list = Arrays.asList(ids);
+        int n=bo.changeAttendStatusToQJ(list,courseId);
+        return new Message("签到成功");
+    }
+    //修改签到状态为旷课
+    @RequestMapping("changeAttendStatus3")
+    public @ResponseBody Message changeAttendStatus3(HttpSession session,@RequestBody Integer... ids){
+//      int courseId = (Integer) session.getAttribute("courseId");
+        int courseId =1;
+        List<Integer> list = Arrays.asList(ids);
+        int n=bo.changeAttendStatusToKK(list,courseId);
+        return new Message("签到成功");
     }
 
 }

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>课程签到表</title>
+    <link rel="stylesheet" href="../css/bootstrap.css"/>
+    <link rel="stylesheet" href="../css/jquery-ui.css"/>
+</head>
+<body>
+<div id="my-div" >
+    <table class="table text-center table-bordered ">
+        <thead>
+        <tr>
+            <td>序号</td>
+            <td>姓名</td>
+            <td>学号</td>
+            <td>性别</td>
+            <td>联系电话</td>
+            <td>状态</td>
+            <td>选择</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(s,index) in studentList">
+            <td>{{index+1}}</td>
+            <td>{{s.name}}</td>
+            <td>{{s.loginName}}</td>
+            <td>{{s.gender}}</td>
+            <td>{{s.tel}}</td>
+            <td>{{s.attendStatusStr}}</td>
+            <td><input type="checkbox" v-model="selectId" :value="s.stuId"/></td>
+        </tr>
+        </tbody>
+    </table>
+    <div>
+        <span>第{{page.pageNo}}页/共{{page.totalPage}}页</span>
+        <span>第{{page.firstResultNum+1}}条~第{{page.lastResultNum}}条/共{{page.totalQuantity}}条</span>
+    </div>
+    <div><button @click="setPageNo(1)" class="btn btn-default btn-sm">首页</button>
+        <button @click="setPageNo(qo.pageNo-1)" class="btn btn-default btn-sm">上一页</button>
+        <input v-model="qo.pageNo" /><button @click="setPageNo(qo.pageNo)" type="button" class="btn btn-default btn-sm">跳转</button>
+        <button @click="setPageNo(qo.pageNo+1)" class="btn btn-default btn-sm">下一页</button>
+        <button @click="setPageNo(page.totalPage)" class="btn btn-default btn-sm">尾页</button>
+    </div>
+    <div>
+
+        <a class="btn btn-default btn-sm" href="exportExcel.do">导出签到表</a>
+        <button class="btn btn-default btn-sm"type="button" @click="toStatus1">出勤</button>
+        <button class="btn btn-default btn-sm"type="button" @click="toStatus2">请假</button>
+        <button class="btn btn-default btn-sm"type="button" @click="toStatus3">旷课</button>
+        <button class="btn btn-default btn-sm"type="button" @click="resetExcel">重置</button>
+    </div>
+</div>
+
+
+<script src="../js/jquery-3.2.1.js"></script>
+<script src="../js/vue.js"></script>
+<script src="../js/axios.js"></script>
+<script src="../css/bootstrap.css"></script>
+<script>
+    var vm =new Vue({
+        el:'#my-div',
+        data:{
+            selectId:[],
+            qo:{
+                flag:1,
+                pageNo:1,
+                pageSize:3
+            },
+            studentList:[],
+            page:{
+                pageNo:1,
+                pageSize:3
+            }
+        },
+        created: function () {
+            this.showStudent();
+        },
+        methods:{
+            showStudent:function () {
+                axios({
+                    method:"POST",
+                    url:"courseStudentList.do",
+                    data:this.qo
+                }).then((res) => {
+                    this.studentList=res.data.dataList;
+                    this.page=res.data.page;
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            }, setPageNo:function (n) {
+                if (n > this.page.totalPage) {
+                    n = this.page.totalPage;
+                }
+                if (n < 1) {
+                    n = 1;
+                }
+                this.qo.pageNo = n;
+                this.showStudent();
+            },toStatus1:function () {
+//                alert(this.selectId);
+                axios({
+                    method:"POST",
+                    url:'changeAttendStatus1.do',
+                    data:this.selectId
+                }).then(function(m){
+                    alert(m.data.message);
+                }).catch(function (err) {
+                    console.log(err);
+                });
+                this.showStudent();
+                this.resetExcel();
+            },toStatus2:function () {
+//                alert(this.selectId);
+                axios({
+                    method:"POST",
+                    url:'changeAttendStatus2.do',
+                    data:this.selectId
+                }).then(function(m){
+                    alert(m.data.message);
+                }).catch(function (err) {
+                    console.log(err);
+                });
+                this.showStudent();
+                this.resetExcel();
+            },toStatus3:function () {
+                axios({
+                    method:"POST",
+                    url:"changeAttendStatus3.do",
+                    data:this.selectId
+                }).then(function(m){
+                    alert(m.data.message);
+                }).catch(function (err) {
+                    console.log(err);
+                });
+                this.showStudent();
+                this.resetExcel();
+            },resetExcel:function () {
+                this.selectId=[];
+            }
+        }
+    });
+</script>
+</body>
+</html>

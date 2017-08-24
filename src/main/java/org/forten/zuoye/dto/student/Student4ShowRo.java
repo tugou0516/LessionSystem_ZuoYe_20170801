@@ -3,6 +3,8 @@ package org.forten.zuoye.dto.student;
 import org.forten.utils.common.DateUtil;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -105,6 +107,16 @@ public class Student4ShowRo {
 
     public void setBirthday(Date birthday) {
         this.birthday = birthday;
+    }
+
+    public int getAge(){
+        Calendar birth = Calendar.getInstance();
+        birth.setTime(birthday);
+        int birthYear=birth.get(Calendar.YEAR);
+        Calendar now =Calendar.getInstance();
+        now.setTime(new Date());
+        int nowYear=now.get(Calendar.YEAR);
+        return nowYear-birthYear;
     }
 
     public String getTel() {

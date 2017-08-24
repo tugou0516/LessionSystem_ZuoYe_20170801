@@ -118,6 +118,17 @@ public class Student4ExcelShow {
         this.attendStatus = attendStatus;
     }
 
+    public String getAttendStatusStr(){
+        if(attendStatus==1)
+            return "出勤";
+        else if(attendStatus==2)
+            return "旷课";
+        else if(attendStatus==3)
+            return "请假";
+        else
+            return "未签到";
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

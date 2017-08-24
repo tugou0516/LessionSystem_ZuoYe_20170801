@@ -24,10 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by student1 on 2017/8/15.
@@ -179,14 +176,14 @@ public class CoManageBo {
         }
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public Workbook exportData(int id) {
         String hql="SELECT new org.forten.zuoye.dto.student.Student4ShowRo(s.id, s.loginName, s.name, s.gender, s.position, s.birthday, s.tel, s.email) " +
-                "FROM Student s RIGHT JOIN LinedCS l ON (s.id=l.studentId) WHERE l.courseId=:id ";
+                "FROM Student s RIGHT JOIN LinedCS l ON (s.id=l.studentId) WHERE l.chooseStatus=1 AND l.courseId=:id ";
         Map<String,Object> param = new HashMap<>();
         param.put("id",id);
 
-        List<Student4ShowRo> dtoList = hDao.findBy(hql);
+        List<Student4ShowRo> dtoList = hDao.findBy(hql,param);
 
         // 2003格式的Excel工作簿模型
         Workbook wb = new HSSFWorkbook();
@@ -207,6 +204,8 @@ public class CoManageBo {
         header.createCell(3).setCellValue("性别");
         header.createCell(4).setCellValue("电话");
         header.createCell(5).setCellValue("出勤");
+        header.createCell(6).setCellValue("请假");
+        header.createCell(7).setCellValue("旷课");
 
 
         // 生成数据行
@@ -220,6 +219,35 @@ public class CoManageBo {
         }
 
         return wb;
+    }
+
+    //修改签到状态为签到
+    @Transactional
+    public int changeAttendStatusToCQ(List<Integer> list,int courseId){
+        String hql="UPDATE LinedCS SET attendanceStatus=1 WHERE courseId=:courseId AND studentId IN (:arr) ";
+        Map<String,Object> params= new HashMap<>();
+        params.put("courseId",courseId);
+        params.put("arr",list);
+        return hDao.executeUpdate(hql,params);
+    }
+    //修改签到状态为请假
+    @Transactional
+    public int changeAttendStatusToQJ(List<Integer> list,int courseId){
+        String hql="UPDATE LinedCS SET attendanceStatus=3 WHERE courseId=:courseId AND studentId IN (:arr) ";
+        Map<String,Object> params= new HashMap<>();
+        params.put("courseId",courseId);
+        params.put("arr",list);
+        return hDao.executeUpdate(hql,params);
+    }
+
+    //修改签到状态为旷课
+    @Transactional
+    public int changeAttendStatusToKK(List<Integer> list,int courseId){
+        String hql="UPDATE LinedCS SET attendanceStatus=2 WHERE courseId=:courseId AND studentId IN (:arr) ";
+        Map<String,Object> params= new HashMap<>();
+        params.put("courseId",courseId);
+        params.put("arr",list);
+        return hDao.executeUpdate(hql,params);
     }
 
 
