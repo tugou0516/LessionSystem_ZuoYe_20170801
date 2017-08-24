@@ -57,8 +57,10 @@ public class CoManageAction {
     //列出已选该门课程的学生
     //课程ID从session中获得
     @RequestMapping("courseStudentList")
-    public @ResponseBody RoWithPage<Student4ShowRo> listCourseStudent(CourseStudentQo qo, HttpSession session){
-        int courseId = (Integer) session.getAttribute("courseId");
+    public @ResponseBody RoWithPage<Student4ShowRo> listCourseStudent(@RequestBody CourseStudentQo qo, HttpSession session){
+//        int courseId = (Integer) session.getAttribute("courseId");
+        int courseId =1;
         return bo.doListStudentByCourse(qo,courseId);
     }
+
 }
