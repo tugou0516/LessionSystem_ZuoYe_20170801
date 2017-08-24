@@ -1,5 +1,6 @@
 package org.forten.zuoye.action;
 
+import org.apache.poi.ss.usermodel.Workbook;
 import org.forten.zuoye.bo.CoManageBo;
 import org.forten.zuoye.dto.common.Message;
 import org.forten.zuoye.dto.common.RoWithPage;
@@ -7,6 +8,7 @@ import org.forten.zuoye.dto.course.Course4CoManageRo;
 import org.forten.zuoye.dto.course.CourseQo;
 import org.forten.zuoye.dto.course.Dto4SaveCourse;
 import org.forten.zuoye.dto.student.CourseStudentQo;
+import org.forten.zuoye.dto.student.Student4ExcelShow;
 import org.forten.zuoye.dto.student.Student4ShowRo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,7 +17,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -57,10 +62,25 @@ public class CoManageAction {
     //列出已选该门课程的学生
     //课程ID从session中获得
     @RequestMapping("courseStudentList")
-    public @ResponseBody RoWithPage<Student4ShowRo> listCourseStudent(@RequestBody CourseStudentQo qo, HttpSession session){
+    public @ResponseBody RoWithPage<Student4ExcelShow> listCourseStudent(@RequestBody CourseStudentQo qo, HttpSession session){
 //        int courseId = (Integer) session.getAttribute("courseId");
         int courseId =1;
         return bo.doListStudentByCourse(qo,courseId);
+    }
+
+    //签到表导出
+    //课程ID从session中获得
+    @RequestMapping("exportExcel")
+    public void export(HttpServletResponse response,HttpSession session){
+//        int courseId = (Integer) session.getAttribute("courseId");
+        int courseId =1;
+        try(OutputStream out = response.getOutputStream(); Workbook wb = bo.exportData(courseId)){
+            response.setContentType("application/x-msexcel");
+            response.setHeader("Content-Disposition","attachment;filename=签到表.xls");
+            wb.write(out);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
     }
 
 }
