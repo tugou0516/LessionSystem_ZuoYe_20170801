@@ -39,68 +39,104 @@
         <button @click="select">查询</button>
         <button @click="clear">重置</button>
     </div>
-    <p>*双击单元格可修改课程信息</p>
-    <p>*灰色单元格不可修改</p>
     <table border="2">
         <thead>
-            <tr>
-                <th class="check" hidden="hidden"><input type="checkbox" @change="checkAll">全选</th>
-                <th>ID</th>
-                <th>名称</th>
-                <th>教室</th>
-                <th>授课老师</th>
-                <th>选课开始时间</th>
-                <th>选课结束时间</th>
-                <th>课程开始时间</th>
-                <th>课程结束时间</th>
-                <th>学分</th>
-                <th>课容量</th>
-                <th>课程状态</th>
-                <th>学员情况</th>
-            </tr>
+        <tr>
+            <th class="check" hidden="hidden"><input type="checkbox" @change="checkAll">全选</th>
+            <th>ID</th>
+            <th>名称</th>
+            <th>教室</th>
+            <th>授课老师</th>
+            <th>选课开始时间</th>
+            <th>选课结束时间</th>
+            <th>课程开始时间</th>
+            <th>课程结束时间</th>
+            <th>学分</th>
+            <th>课容量</th>
+            <th>课程状态</th>
+            <th>学员情况</th>
+        </tr>
         </thead>
         <tbody>
-            <tr v-for="c in courses">
-                <td class="check" hidden="hidden"><input type="checkbox" v-model="checkedCourses" :value="c.id"></td>
-                <td class="uneditable">{{c.id}}</td>
-                <td>{{c.name}}</td>
-                <td>{{c.classRoom}}</td>
-                <td>{{c.teacher}}</td>
-                <td>{{c.courseStartTime | dateTime}}</td>
-                <td>{{c.courseEndTime | dateTime}}</td>
-                <td>{{c.classStartTime | dateTime}}</td>
-                <td>{{c.classEndTime | dateTime}}</td>
-                <td>{{c.score}}</td>
-                <td class="uneditable">{{c.classCapacity}}</td>
-                <td>{{nowDateTime | courseStatus(c.courseStartTime,c.courseEndTime,c.classStartTime)}}</td>
-                <td><button>查看</button></td>
-            </tr>
+        <tr v-for="c in courses">
+            <td class="check" hidden="hidden"><input type="checkbox" v-model="checkedCourses" :value="c.id"></td>
+            <td>{{c.id}}</td>
+            <td>{{c.name}}</td>
+            <td>{{c.classRoom}}</td>
+            <td>{{c.teacher}}</td>
+            <td>{{c.courseStartTime | dateTime}}</td>
+            <td>{{c.courseEndTime | dateTime}}</td>
+            <td>{{c.classStartTime | dateTime}}</td>
+            <td>{{c.classEndTime | dateTime}}</td>
+            <td>{{c.score}}</td>
+            <td>{{c.classCapacity}}</td>
+            <td>{{nowDateTime | courseStatus(c.courseStartTime,c.courseEndTime,c.classStartTime)}}</td>
+            <td><button type="button" :data-cid="c.id" @click="toStuList">查看</button></td>
+        </tr>
         </tbody>
         <tfoot>
-            <tr>
-                <td colspan="12">
-                    <button @click="changePage(1)">首页</button>
-                    <button @click="changePage(qo.pageNo-1)">上一页</button>
-                    <span>{{page.pageNo}} / {{page.totalPage}}</span>
-                    <button @click="changePage(qo.pageNo+1)">下一页</button>
-                    <button @click="changePage(page.totalPage)">尾页</button>
-                    <span>跳转页码：<input style="width: 25px" v-model="qo.pageNo"></span>
-                    <button @click="select">GO</button>
-                </td>
-            </tr>
+        <tr>
+            <td colspan="12" style="text-align: center">
+                <button @click="changePage(1)">首页</button>
+                <button @click="changePage(qo.pageNo-1)">上一页</button>
+                <span>{{page.pageNo}} / {{page.totalPage}}</span>
+                <button @click="changePage(qo.pageNo+1)">下一页</button>
+                <button @click="changePage(page.totalPage)">尾页</button>
+                <span>跳转页码：<input style="width: 25px" v-model="qo.pageNo"></span>
+                <button @click="select">GO</button>
+            </td>
+        </tr>
         </tfoot>
     </table>
 </div>
 <div class="module" id="addAndDel">
-    <button id="delCheckBtn" @click="delCheck">删除课程</button>
-    <button id="delDoBtn" hidden="hidden" @click="delDo">确认删除</button>
-    <button id="delCancelBtn" hidden="hidden" @click="delCancel">取消</button><br/>
-    <button class="module">添加课程</button>
+    <div>
+        <button id="delCheckBtn" @click="delCheck">删除课程</button>
+        <button id="delDoBtn" hidden="hidden" @click="delDo">确认删除</button>
+        <button id="delCancelBtn" hidden="hidden" @click="delCancel">取消</button><br/>
+        <button class="module" @click="function(){showAddForm = !showAddForm}">{{showAddForm? "取消添加":"添加课程"}}</button>
+        <button class="module" @click="function(){showUpdateForm = !showUpdateForm}">{{showUpdateForm? "取消更新":"更新课程"}}</button>
+    </div>
+    <div>
+        <form id="addForm" v-show="showAddForm">
+            <label>课程名称 </label><input id="name" v-model="addCourse.name" name="name" value=""><br/>
+            <label>上课教室 </label><input id="classRoom" v-model="addCourse.classRoom" name="classRoom"><br/>
+            <label>授课老师 </label><input v-model="addCourse.teacher" class="teacher"><br/>
+            <label>选课起止时间 </label><input id="t1" v-model="addCourse.courseStartTime" type="datetime-local" name="courseStartTime">
+            <input v-model="addCourse.courseEndTime" type="datetime-local" name="courseEndTime"><br/>
+            <label>上课起止时间 </label><input id="t2" v-model="addCourse.classStartTime" type="datetime-local" name="classStartTime">
+            <input v-model="addCourse.classEndTime" type="datetime-local" name="classEndTime"><br/>
+            <label>课程学分 </label><input v-model="addCourse.score" name="score"><br/>
+            <label>课程容量 </label><input v-model="addCourse.classCapacity" name="rl"><br/>
+            <div>
+                <button id="saveBtn" type="button">保存</button>
+                <button type="button" @click="function(){addCourse={} }">重置</button>
+            </div>
+        </form>
+    </div>
+    <div>
+        <form id="updateForm" v-show="showUpdateForm">
+            <label>课程名称 </label><input v-model="upCourse.name" name="name" value=""><br/>
+            <label>上课教室 </label><input v-model="upCourse.classRoom" name="classRoom"><br/>
+            <label>授课老师 </label><input v-model="upCourse.teacher" class="teacher"><br/>
+            <label>选课起止时间 </label><input id="t3" v-model="upCourse.courseStartTime" type="datetime-local" name="courseStartTime">
+            <input v-model="upCourse.courseEndTime" type="datetime-local" name="courseEndTime"><br/>
+            <label>上课起止时间 </label><input id="t4" v-model="upCourse.classStartTime" type="datetime-local" name="classStartTime">
+            <input v-model="upCourse.classEndTime" type="datetime-local" name="classEndTime"><br/>
+            <label>课程学分 </label><input v-model="upCourse.score" name="score"><br/>
+            <label>课程容量 </label><input v-model="upCourse.classCapacity" name="rl" readonly><span>课容量不可更改</span><br/>
+            <div>
+                <button id="updateBtn" type="button">更新</button>
+                <button type="button" @click="function(){upCourse={} }">重置</button>
+            </div>
+        </form>
+    </div>
 </div>
 
-<script src="../js/jquery-3.2.1.js"></script>
 <script src="../js/vue.js"></script>
 <script src="../js/axios.js"></script>
+<script src="../js/jquery-3.2.1.js"></script>
+<script src="../js/jquery.validate.js"></script>
 <script>
     $(function () {
         Vue.filter('dateTime',function (value) {
@@ -141,7 +177,88 @@
             if(value>=t3){
                 return "已结课";
             }
+        });
+        $.validator.methods.compareDate = function (value,element,param) {
+            var startTime = new Date($(param).val()).getTime();
+            var endTime = new Date(value).getTime();
+            return startTime<endTime;
+        };
+        $('#addForm').validate({
+            rules:{
+                name:{required:true},
+                classRoom:{required:true},
+                teacher:{required:true},
+                courseStartTime:{required:true},
+                courseEndTime:{
+                    required:true,
+                    compareDate:"#t1"
+                },
+                classStartTime:{required:true},
+                classEndTime:{
+                    required:true,
+                    compareDate:"#t2"
+                },
+                score:{
+                    required:true,
+                    number:true,
+                    min:0
+                },
+                rl:{
+                    required:true,
+                    number:true,
+                    min:0
+                }
+            },
+            messages:{
+                name:{required:"不可为空"},
+                classRoom:{required:"不可为空"},
+                teacher:{required:"不可为空"},
+                courseStartTime:{required:"不可为空"},
+                courseEndTime:{
+                    required:"不可为空",
+                    compareDate:"结束时间不可早于开始时间"
+                },
+                classStartTime:{required:"不可为空"},
+                classEndTime:{
+                    required:"不可为空",
+                    compareDate:"结束时间不可早于开始时间"
+                },
+                score:{
+                    required:"不可为空",
+                    number:"必须输入数字",
+                    min:"不可小于0"
+                },
+                rl:{
+                    required:"不可为空",
+                    number:"必须输入数字",
+                    min:"不可小于0"
+                }
+            }
+        });
+        $('#saveBtn').on('click',function () {
+            if($('#addForm').valid()){
+                saveCourse();
+            }
         })
+        var saveCourse = function () {
+            vm02.addCourse.courseStartTime = new Date(vm02.addCourse.courseStartTime).getTime();
+            vm02.addCourse.courseEndTime = new Date(vm02.addCourse.courseEndTime).getTime();
+            vm02.addCourse.classStartTime = new Date(vm02.addCourse.classStartTime).getTime();
+            vm02.addCourse.classEndTime = new Date(vm02.addCourse.classEndTime).getTime();
+            console.log(vm02.addCourse);
+            axios({
+                method:"POST",
+                url:"saveCourse.do",
+                data:vm02.addCourse
+            }).then(function (res) {
+                alert(res.data.message);
+                vm02.showAddForm = false;
+                vm02.addCourse = {};
+                vm01.select();
+            }).catch(function (err) {
+                alert("保存出错："+err)
+            });
+        }
     });
     var vm01 = new Vue({
         el:'#courseList',
@@ -204,6 +321,17 @@
                 }
                 this.qo.pageNo = page;
                 this.select();
+            },
+            toStuList:function (event) {
+                var id = $(event.target).data("cid");
+                axios({
+                    method:"GET",
+                    url:"courseStudent.do?id="+id
+                }).then(function (res) {
+                    window.location.href="courseStudentList.html";
+                }).catch(function (err) {
+                    alert("加载出错："+err);
+                });
             }
         },
         created:function () {
@@ -212,6 +340,12 @@
     });
     var vm02 = new Vue({
         el:'#addAndDel',
+        data:{
+            addCourse:{},
+            upCourse:{},//TODO 和addCourse共用？否则表单和校验都要再写一套
+            showAddForm:false,
+            showUpdateForm:false
+        },
         methods:{
             delCheck:function () {
                 $('#delCheckBtn').attr("hidden","hidden");
@@ -220,24 +354,28 @@
                 $('.check').removeAttr("hidden");
             },
             delDo:function () {
-                if(confirm("确认删除所选的课程？")){
-                    console.log(vm01.checkedCourses);
-                    axios({
-                        method:"POST",
-                        url:"delByIds.do",
-                        data:vm01.checkedCourses
-                    }).then(function (res) {
-                        alert(res.data.message);
-                    }).catch(function (err) {
-                        alert("删除出错："+err);
-                    });
+                if(vm01.checkedCourses.length == 0){
+                    alert("未选中任何课程");
+                }else {
+                    if(confirm("确认删除所选的课程？")){
+                        console.log(vm01.checkedCourses);
+                        axios({
+                            method:"POST",
+                            url:"delByIds.do",
+                            data:vm01.checkedCourses
+                        }).then(function (res) {
+                            alert(res.data.message);
+                            vm01.select();
+                        }).catch(function (err) {
+                            alert("删除出错："+err);
+                        });
+                    }
+                    $('#delCheckBtn').removeAttr("hidden");
+                    $('#delDoBtn').attr("hidden","hidden");
+                    $('#delCancelBtn').attr("hidden","hidden");
+                    $('.check').attr("hidden","hidden");
+                    vm01.checkedCourses = [];
                 }
-                $('#delCheckBtn').removeAttr("hidden");
-                $('#delDoBtn').attr("hidden","hidden");
-                $('#delCancelBtn').attr("hidden","hidden");
-                $('.check').attr("hidden","hidden");
-                vm01.checkedCourses = [];
-                vm01.select();
             },
             delCancel:function () {
                 $('#delCheckBtn').removeAttr("hidden");

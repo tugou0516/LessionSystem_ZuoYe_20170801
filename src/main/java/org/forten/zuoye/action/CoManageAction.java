@@ -2,9 +2,11 @@ package org.forten.zuoye.action;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.forten.zuoye.bo.CoManageBo;
+import org.forten.zuoye.dto.EmailDto;
 import org.forten.zuoye.dto.common.Message;
 import org.forten.zuoye.dto.common.RoWithPage;
 import org.forten.zuoye.dto.course.Course4CoManageRo;
+import org.forten.zuoye.dto.course.CourseChangeDto;
 import org.forten.zuoye.dto.course.CourseQo;
 import org.forten.zuoye.dto.course.Dto4SaveCourse;
 import org.forten.zuoye.dto.student.CourseStudentQo;
@@ -81,6 +83,14 @@ public class CoManageAction {
             e.printStackTrace();
         }
     }
+    @RequestMapping("updateCourse")
+    public Message update(@RequestBody CourseChangeDto dto){
+        return bo.doUpdate(dto);
+    }
+    @RequestMapping("sendEmail")
+    public Message sendEmail(@RequestBody EmailDto dto){
+        return bo.sendEmail(dto);
+    }
 
     //修改签到状态为旷课
     @RequestMapping("changeAttendStatus1")
@@ -111,3 +121,4 @@ public class CoManageAction {
     }
 
 }
+
