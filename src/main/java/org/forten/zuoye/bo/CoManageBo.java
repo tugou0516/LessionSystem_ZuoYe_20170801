@@ -1,5 +1,10 @@
 package org.forten.zuoye.bo;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.forten.utils.common.StringUtil;
 import org.forten.utils.system.BeanPropertyUtil;
 import org.forten.utils.system.PageInfo;
@@ -11,6 +16,7 @@ import org.forten.zuoye.dto.course.CourseQo;
 import org.forten.zuoye.dto.course.Dto4SaveCourse;
 import org.forten.zuoye.dto.course.Dto4UpdateCourse;
 import org.forten.zuoye.dto.student.CourseStudentQo;
+import org.forten.zuoye.dto.student.Student4ExcelShow;
 import org.forten.zuoye.dto.student.Student4ShowRo;
 import org.forten.zuoye.model.Course;
 import org.forten.zuoye.model.Student;
@@ -122,10 +128,10 @@ public class CoManageBo {
 
     //分页查询课程学生 可按登录名和姓名模糊查询
     @Transactional
-    public RoWithPage<Student4ShowRo> doListStudentByCourse(CourseStudentQo qo, int id){
+    public RoWithPage<Student4ExcelShow> doListStudentByCourse(CourseStudentQo qo, int id){
         String countHql="SELECT count(s.id) " +
                 "FROM Student s RIGHT JOIN LinedCS l ON (s.id=l.studentId) WHERE l.courseId=:id ";
-        String hql="SELECT new org.forten.zuoye.dto.student.Student4ShowRo(s.id, s.loginName, s.name, s.gender, s.position, s.birthday, s.tel, s.email) " +
+        String hql="SELECT new org.forten.zuoye.dto.student.Student4ExcelShow(s.id, l.courseId, s.loginName,  s.name, s.gender, s.position, s.birthday,s.tel, s.email, l.attendanceStatus) " +
                 "FROM Student s RIGHT JOIN LinedCS l ON (s.id=l.studentId) WHERE l.courseId=:id ";
         Map<String,Object> param = new HashMap<>();
         param.put("id",id);
@@ -161,14 +167,60 @@ public class CoManageBo {
             hql = hql + "AND l.chooseStatus=4 ";
         }
 
+        hql = hql + "ORDER BY s.loginName ";
+
         long count=hDao.findOneBy(countHql,param);
         if (count==0)
             return RoWithPage.EMPTY_RO;
         else{
             PageInfo page =PageInfo.getInstance(qo.getPageNo(),qo.getPageSize(),count);
-            List<Student4ShowRo> studentList =hDao.findBy(hql,param,(int)page.getFirstResultNum(),page.getPageSize());
+            List<Student4ExcelShow> studentList =hDao.findBy(hql,param,(int)page.getFirstResultNum(),page.getPageSize());
             return new RoWithPage<>(studentList,page);
         }
     }
+
+    @Transactional(readOnly = true)
+    public Workbook exportData(int id) {
+        String hql="SELECT new org.forten.zuoye.dto.student.Student4ShowRo(s.id, s.loginName, s.name, s.gender, s.position, s.birthday, s.tel, s.email) " +
+                "FROM Student s RIGHT JOIN LinedCS l ON (s.id=l.studentId) WHERE l.courseId=:id ";
+        Map<String,Object> param = new HashMap<>();
+        param.put("id",id);
+
+        List<Student4ShowRo> dtoList = hDao.findBy(hql);
+
+        // 2003格式的Excel工作簿模型
+        Workbook wb = new HSSFWorkbook();
+        // 2007格式的Excel工作簿模型
+        // Workbook wb = new XSSFWorkbook();
+
+        // 在Workbook中创建一个sheet
+        Sheet sheet = wb.createSheet("课程签到信息");
+
+        // 在sheet中创建表头行
+        Row header = sheet.createRow(0);
+
+        // 创建表头行中的单元格及表头标题
+        Cell c1 = header.createCell(0);
+        c1.setCellValue("序号");
+        header.createCell(1).setCellValue("学号");
+        header.createCell(2).setCellValue("姓名");
+        header.createCell(3).setCellValue("性别");
+        header.createCell(4).setCellValue("电话");
+        header.createCell(5).setCellValue("出勤");
+
+
+        // 生成数据行
+        for (Student4ShowRo dto : dtoList) {
+            Row row = sheet.createRow(sheet.getLastRowNum()+1);
+            row.createCell(0).setCellValue(sheet.getLastRowNum());
+            row.createCell(1).setCellValue(dto.getLoginName());
+            row.createCell(2).setCellValue(dto.getName());
+            row.createCell(3).setCellValue(dto.getGender());
+            row.createCell(4).setCellValue(dto.getTel());
+        }
+
+        return wb;
+    }
+
 
 }
