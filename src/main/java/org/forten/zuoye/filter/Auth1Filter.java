@@ -8,6 +8,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -20,7 +21,7 @@ import org.forten.zuoye.dto.student.RenShiAdmin;
  * 拦截要访问stident路径下所有资源和根路径下index.html的请求
  * 校验其是否已经通过登录
  */
-//@WebFilter(urlPatterns={"/comanage/*","/course/*"})
+@WebFilter(urlPatterns={"/comanage/*","/course/*"})
 public class Auth1Filter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {

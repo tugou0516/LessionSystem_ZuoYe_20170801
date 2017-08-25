@@ -84,11 +84,11 @@ public class CoManageAction {
         }
     }
     @RequestMapping("updateCourse")
-    public Message update(@RequestBody CourseChangeDto dto){
+    public @ResponseBody Message update(@RequestBody CourseChangeDto dto){
         return bo.doUpdate(dto);
     }
     @RequestMapping("sendEmail")
-    public Message sendEmail(@RequestBody EmailDto dto){
+    public @ResponseBody Message sendEmail(@RequestBody EmailDto dto){
         return bo.sendEmail(dto);
     }
 
