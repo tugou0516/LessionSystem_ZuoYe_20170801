@@ -231,8 +231,8 @@ public class CoManageBo {
         params.put("classRoom", dto.getClassRoom());
         params.put("courseStartTime", dto.getCourseStartTime());
         params.put("courseEndTime", dto.getCourseEndTime());
-        params.put("classStateTime", dto.getClassStartTime());
-        params.put("classEndTime()", dto.getClassEndTime());
+        params.put("classStartTime", dto.getClassStartTime());
+        params.put("classEndTime", dto.getClassEndTime());
         params.put("score", dto.getScore());
         try {
             hDao.executeUpdate(hql, params);
