@@ -6,6 +6,7 @@ import org.forten.zuoye.dto.common.RoWithPage;
 import org.forten.zuoye.dto.course.Course4ShowDto;
 import org.forten.zuoye.dto.course.Course4StuShowRo;
 import org.forten.zuoye.dto.course.CourseQo4Stu;
+import org.forten.zuoye.dto.student.LoginedStudent;
 import org.forten.zuoye.dto.student.Student4SaveDto;
 import org.forten.zuoye.dto.student.Student4ShowRo;
 import org.springframework.stereotype.Controller;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -27,56 +29,62 @@ public class StudentAction {
 
     @RequestMapping("showPrivateInfo")
     public @ResponseBody
-    Student4ShowRo getOne(){
+    Student4ShowRo getOne(HttpSession session){
         //        从session获得学员id
-        int id=1;
+        LoginedStudent user = (LoginedStudent) session.getAttribute("logined");
+        int id=user.getId();
         return bo.doSelectByIdH(id);
     }
 
     @RequestMapping("showCompletedCourse")
     public @ResponseBody
-    List<Course4StuShowRo> listCompletedCourse(){
+    List<Course4StuShowRo> listCompletedCourse(HttpSession session){
         //        从session获得学员id
-        int id=1;
+        LoginedStudent user = (LoginedStudent) session.getAttribute("logined");
+        int id=user.getId();
         return bo.listCompletedCourse(id);
     }
 
     @RequestMapping("showOtherCourse")
     public @ResponseBody
-    List<Course4StuShowRo> listOtherCourse(){
+    List<Course4StuShowRo> listOtherCourse(HttpSession session){
         //      从session获得学员id
-        int id=1;
+        LoginedStudent user = (LoginedStudent) session.getAttribute("logined");
+        int id=user.getId();
         return bo.listOtherCourse(id);
     }
 
     @RequestMapping("deleteCompletedCourse")
     public @ResponseBody Message
-    deleteSelectedCourse(@RequestBody Integer...ids){
+    deleteSelectedCourse(HttpSession session,@RequestBody Integer...ids){
         //      从session获得学员id
-        int id=1;
+        LoginedStudent user = (LoginedStudent) session.getAttribute("logined");
+        int id=user.getId();
         return bo.deleteCourseList(id,ids);
     }
 
     @RequestMapping("chooseCourse")
-    public @ResponseBody int chooseCourse(int id){
+    public @ResponseBody int chooseCourse(HttpSession session,int id){
         //  从session获得学员id
-        int stuId = 1;
+        LoginedStudent user = (LoginedStudent) session.getAttribute("logined");
+        int stuId=user.getId();
         int coId = id;
         return bo.chooseCourse(stuId,coId);
     }
 
     @RequestMapping("getInLine")
-    public @ResponseBody int getInLine(int id){
-        int stuId = 1;
+    public @ResponseBody int getInLine(HttpSession session,int id){
+        LoginedStudent user = (LoginedStudent) session.getAttribute("logined");
+        int stuId=user.getId();
         int coId = id;
         return bo.getInLine(stuId,coId);
     }
 
     @RequestMapping("listAllCourse")
     public @ResponseBody
-    RoWithPage<Course4ShowDto> list(@RequestBody CourseQo4Stu qo) {
-        // 从session获得学员id
-        int id = 1;
+    RoWithPage<Course4ShowDto> list(HttpSession session,@RequestBody CourseQo4Stu qo) {
+        LoginedStudent user = (LoginedStudent) session.getAttribute("logined");
+        int id =user.getId();
         return bo.doListAll(qo,id);
     }
 

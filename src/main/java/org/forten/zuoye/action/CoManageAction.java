@@ -64,8 +64,8 @@ public class CoManageAction {
     //课程ID从session中获得
     @RequestMapping("courseStudentList")
     public @ResponseBody RoWithPage<Student4ExcelShow> listCourseStudent(@RequestBody CourseStudentQo qo, HttpSession session){
-//        int courseId = (Integer) session.getAttribute("courseId");
-        int courseId =1;
+        int courseId = (Integer) session.getAttribute("courseId");
+//        int courseId =1;
         return bo.doListStudentByCourse(qo,courseId);
     }
 
@@ -73,8 +73,8 @@ public class CoManageAction {
     //课程ID从session中获得
     @RequestMapping("exportExcel")
     public void export(HttpServletResponse response,HttpSession session){
-//        int courseId = (Integer) session.getAttribute("courseId");
-        int courseId =1;
+        int courseId = (Integer) session.getAttribute("courseId");
+//        int courseId =1;
         try(OutputStream out = response.getOutputStream(); Workbook wb = bo.exportData(courseId)){
             response.setContentType("application/x-msexcel");
             response.setHeader("Content-Disposition","attachment;filename=student.xls");
@@ -95,8 +95,8 @@ public class CoManageAction {
     //修改签到状态为旷课
     @RequestMapping("changeAttendStatus1")
     public @ResponseBody Message changeAttendStatus1(HttpSession session,@RequestBody Integer... ids){
-//      int courseId = (Integer) session.getAttribute("courseId");
-        int courseId =1;
+      int courseId = (Integer) session.getAttribute("courseId");
+//        int courseId =1;
         List<Integer> list = Arrays.asList(ids);
         int n=bo.changeAttendStatusToCQ(list,courseId);
         return new Message("签到成功");
@@ -104,8 +104,8 @@ public class CoManageAction {
     //修改签到状态为请假
     @RequestMapping("changeAttendStatus2")
     public @ResponseBody Message changeAttendStatus2(HttpSession session,@RequestBody Integer... ids){
-//      int courseId = (Integer) session.getAttribute("courseId");
-        int courseId =1;
+      int courseId = (Integer) session.getAttribute("courseId");
+//        int courseId =1;
         List<Integer> list = Arrays.asList(ids);
         int n=bo.changeAttendStatusToQJ(list,courseId);
         return new Message("签到成功");
@@ -113,8 +113,8 @@ public class CoManageAction {
     //修改签到状态为旷课
     @RequestMapping("changeAttendStatus3")
     public @ResponseBody Message changeAttendStatus3(HttpSession session,@RequestBody Integer... ids){
-//      int courseId = (Integer) session.getAttribute("courseId");
-        int courseId =1;
+      int courseId = (Integer) session.getAttribute("courseId");
+//        int courseId =1;
         List<Integer> list = Arrays.asList(ids);
         int n=bo.changeAttendStatusToKK(list,courseId);
         return new Message("签到成功");
