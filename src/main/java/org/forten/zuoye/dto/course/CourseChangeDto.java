@@ -20,12 +20,13 @@ public class CourseChangeDto {
     private Date classStartTime;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date classEndTime;
-    private String score;
+    private int classCapacity;
+    private int score;
 
     public CourseChangeDto() {
     }
 
-    public CourseChangeDto(int id, String name, String teacher, String classRoom, Date courseStartTime, Date courseEndTime, Date classStartTime, Date classEndTime, String score) {
+    public CourseChangeDto(int id, String name, String teacher, String classRoom, Date courseStartTime, Date courseEndTime, Date classStartTime, Date classEndTime, int classCapacity, int score) {
         this.id = id;
         this.name = name;
         this.teacher = teacher;
@@ -34,6 +35,7 @@ public class CourseChangeDto {
         this.courseEndTime = courseEndTime;
         this.classStartTime = classStartTime;
         this.classEndTime = classEndTime;
+        this.classCapacity = classCapacity;
         this.score = score;
     }
 
@@ -61,7 +63,7 @@ public class CourseChangeDto {
         this.teacher = teacher;
     }
 
-    public String  getClassRoom() {
+    public String getClassRoom() {
         return classRoom;
     }
 
@@ -72,12 +74,9 @@ public class CourseChangeDto {
     public Date getCourseStartTime() {
         return courseStartTime;
     }
+
     public void setCourseStartTime(Date courseStartTime) {
-        if (this.courseStartTime.getTime() < new Date().getTime()) {
-            this.courseStartTime =courseStartTime;
-        }else {
-            this.courseStartTime= this.courseStartTime;
-        }
+        this.courseStartTime = courseStartTime;
     }
 
     public Date getCourseEndTime() {
@@ -88,12 +87,12 @@ public class CourseChangeDto {
         this.courseEndTime = courseEndTime;
     }
 
-    public Date getClassStateTime() {
+    public Date getClassStartTime() {
         return classStartTime;
     }
 
-    public void setClassStateTime(Date classStateTime) {
-        this.classStartTime = classStateTime;
+    public void setClassStartTime(Date classStartTime) {
+        this.classStartTime = classStartTime;
     }
 
     public Date getClassEndTime() {
@@ -104,25 +103,35 @@ public class CourseChangeDto {
         this.classEndTime = classEndTime;
     }
 
-    public String getScore() {
+    public int getClassCapacity() {
+        return classCapacity;
+    }
+
+    public void setClassCapacity(int classCapacity) {
+        this.classCapacity = classCapacity;
+    }
+
+    public int getScore() {
         return score;
     }
 
-    public void setScore(String score) {
+    public void setScore(int score) {
         this.score = score;
     }
 
     @Override
     public String toString() {
         return "CourseChangeDto{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", teacher='" + teacher + '\'' +
-                ", classRoom=" + classRoom +
+                ", classRoom='" + classRoom + '\'' +
                 ", courseStartTime=" + courseStartTime +
                 ", courseEndTime=" + courseEndTime +
-                ", classStateTime=" + classStartTime +
+                ", classStartTime=" + classStartTime +
                 ", classEndTime=" + classEndTime +
-                ", score='" + score + '\'' +
+                ", classCapacity=" + classCapacity +
+                ", score=" + score +
                 '}';
     }
 }
