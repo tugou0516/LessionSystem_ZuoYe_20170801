@@ -43,6 +43,7 @@
         <thead>
         <tr>
             <th class="check" hidden="hidden"><input type="checkbox" @change="checkAll">全选</th>
+            <th class="radio" v-show="showRadio"></th>
             <th>ID</th>
             <th>名称</th>
             <th>教室</th>
@@ -60,6 +61,7 @@
         <tbody>
         <tr v-for="c in courses">
             <td class="check" hidden="hidden"><input type="checkbox" v-model="checkedCourses" :value="c.id"></td>
+            <td class="radio" v-show="showRadio"><input type="radio" name="updRadio" :value="c.id" @change="updChoose"></td>
             <td>{{c.id}}</td>
             <td>{{c.name}}</td>
             <td>{{c.classRoom}}</td>
@@ -94,14 +96,14 @@
         <button id="delCheckBtn" @click="delCheck">删除课程</button>
         <button id="delDoBtn" hidden="hidden" @click="delDo">确认删除</button>
         <button id="delCancelBtn" hidden="hidden" @click="delCancel">取消</button><br/>
-        <button class="module" @click="function(){showAddForm = !showAddForm}">{{showAddForm? "取消添加":"添加课程"}}</button>
-        <button class="module" @click="function(){showUpdateForm = !showUpdateForm}">{{showUpdateForm? "取消更新":"更新课程"}}</button>
+        <button class="module" @click="function(){showAddForm = !showAddForm;showUpdateForm = false}">{{showAddForm? "取消添加":"添加课程"}}</button>
+        <button class="module" @click="updCheck">{{showUpdateForm? "取消更新":"更新课程"}}</button>
     </div>
     <div>
         <form id="addForm" v-show="showAddForm">
-            <label>课程名称 </label><input id="name" v-model="addCourse.name" name="name" value=""><br/>
+            <label>课程名称 </label><input id="name" v-model="addCourse.name" name="name"><br/>
             <label>上课教室 </label><input id="classRoom" v-model="addCourse.classRoom" name="classRoom"><br/>
-            <label>授课老师 </label><input v-model="addCourse.teacher" class="teacher"><br/>
+            <label>授课老师 </label><input v-model="addCourse.teacher" name="teacher"><br/>
             <label>选课起止时间 </label><input id="t1" v-model="addCourse.courseStartTime" type="datetime-local" name="courseStartTime">
             <input v-model="addCourse.courseEndTime" type="datetime-local" name="courseEndTime"><br/>
             <label>上课起止时间 </label><input id="t2" v-model="addCourse.classStartTime" type="datetime-local" name="classStartTime">
@@ -116,21 +118,30 @@
     </div>
     <div>
         <form id="updateForm" v-show="showUpdateForm">
-            <label>课程名称 </label><input v-model="upCourse.name" name="name" value=""><br/>
-            <label>上课教室 </label><input v-model="upCourse.classRoom" name="classRoom"><br/>
-            <label>授课老师 </label><input v-model="upCourse.teacher" class="teacher"><br/>
-            <label>选课起止时间 </label><input id="t3" v-model="upCourse.courseStartTime" type="datetime-local" name="courseStartTime">
-            <input v-model="upCourse.courseEndTime" type="datetime-local" name="courseEndTime"><br/>
-            <label>上课起止时间 </label><input id="t4" v-model="upCourse.classStartTime" type="datetime-local" name="classStartTime">
-            <input v-model="upCourse.classEndTime" type="datetime-local" name="classEndTime"><br/>
-            <label>课程学分 </label><input v-model="upCourse.score" name="score"><br/>
-            <label>课程容量 </label><input v-model="upCourse.classCapacity" name="rl" readonly><span>课容量不可更改</span><br/>
+            <label>课程ID </label><input style="background-color: #ddd" v-model="updCourse.id" name="id" readonly><span style="font-size: 2px;color: #1b2a28;font-style: italic">*课程ID不可更改</span><br/>
+            <label>课程名称 </label><input v-model="updCourse.name" name="name"><br/>
+            <label>上课教室 </label><input v-model="updCourse.classRoom" name="classRoom"><br/>
+            <label>授课老师 </label><input v-model="updCourse.teacher" name="teacher"><br/>
+            <label>选课起止时间 </label><input id="t3" class="courseTime" v-model="updCourse.courseStartTime" type="datetime-local" name="courseStartTime">
+            <input class="courseTime" v-model="updCourse.courseEndTime" type="datetime-local" name="courseEndTime"><span v-show="changeAble.course" style="font-size: 2px;color: #1b2a28;font-style: italic">*选课开始后不可更改选课时间</span><br/>
+            <label>上课起止时间 </label><input id="t4" class="classTime" v-model="updCourse.classStartTime" type="datetime-local" name="classStartTime">
+            <input class="classTime" v-model="updCourse.classEndTime" type="datetime-local" name="classEndTime"><span v-show="changeAble.class" style="font-size: 2px;color: #1b2a28;font-style: italic">*课程开始前1小时不可更改上课时间</span><br/>
+            <label>课程学分 </label><input v-model="updCourse.score" name="score"><br/>
+            <label>课程容量 </label><input style="background-color: #ddd" v-model="updCourse.classCapacity" name="rl" readonly><span style="font-size: 2px;color: #1b2a28;font-style: italic">*课程容量不可更改</span><br/>
             <div>
                 <button id="updateBtn" type="button">更新</button>
-                <button type="button" @click="function(){upCourse={} }">重置</button>
+                <button type="button" @click="function(){updCourse={}}">重置</button>
             </div>
         </form>
     </div>
+    <!--<div>
+        <form id="emailForm" v-show="sendEmail">
+            <label>标题</label><input v-model="emailNotify.title"><br/>
+            <label>正文</label><textarea v-model="emailNotify.test"></textarea><br/>
+            <button type="button" @click="sendDo">发送</button>
+            <button type="button" @click="sendCancel">取消</button>
+        </form>
+    </div>-->
 </div>
 
 <script src="../js/vue.js"></script>
@@ -146,7 +157,6 @@
             d = dateTime.getDate();
             H = dateTime.getHours();
             m = dateTime.getMinutes();
-            s = dateTime.getSeconds();
             if(M<10){
                 M = "0"+M;
             }
@@ -159,10 +169,7 @@
             if(m<10){
                 m = "0"+m;
             }
-            if(s<10){
-                s = "0"+s;
-            }
-            return Y+"-"+M+"-"+d+" "+H+":"+m+":"+s;
+            return Y+"-"+M+"-"+d+" "+H+":"+m;
         });
         Vue.filter('courseStatus',function (value,t1,t2,t3) {
             if(value<t1){
@@ -235,17 +242,75 @@
                 }
             }
         });
+        $('#updateForm').validate({
+            rules:{
+                name:{required:true},
+                classRoom:{required:true},
+                teacher:{required:true},
+                courseStartTime:{required:true},
+                courseEndTime:{
+                    required:true,
+                    compareDate:"#t3"
+                },
+                classStartTime:{required:true},
+                classEndTime:{
+                    required:true,
+                    compareDate:"#t4"
+                },
+                score:{
+                    required:true,
+                    number:true,
+                    min:0
+                },
+                rl:{
+                    required:true,
+                    number:true,
+                    min:0
+                }
+            },
+            messages:{
+                name:{required:"不可为空"},
+                classRoom:{required:"不可为空"},
+                teacher:{required:"不可为空"},
+                courseStartTime:{required:"不可为空"},
+                courseEndTime:{
+                    required:"不可为空",
+                    compareDate:"结束时间不可早于开始时间"
+                },
+                classStartTime:{required:"不可为空"},
+                classEndTime:{
+                    required:"不可为空",
+                    compareDate:"结束时间不可早于开始时间"
+                },
+                score:{
+                    required:"不可为空",
+                    number:"必须输入数字",
+                    min:"不可小于0"
+                },
+                rl:{
+                    required:"不可为空",
+                    number:"必须输入数字",
+                    min:"不可小于0"
+                }
+            }
+        });
         $('#saveBtn').on('click',function () {
             if($('#addForm').valid()){
                 saveCourse();
             }
-        })
+        });
+        $('#updateBtn').on('click',function () {
+            if($('#updateForm').valid()){
+                updCourse();
+            }
+        });
         var saveCourse = function () {
             vm02.addCourse.courseStartTime = new Date(vm02.addCourse.courseStartTime).getTime();
             vm02.addCourse.courseEndTime = new Date(vm02.addCourse.courseEndTime).getTime();
             vm02.addCourse.classStartTime = new Date(vm02.addCourse.classStartTime).getTime();
             vm02.addCourse.classEndTime = new Date(vm02.addCourse.classEndTime).getTime();
             console.log(vm02.addCourse);
+            console.log(vm02.addCourse.courseStartTime);
             axios({
                 method:"POST",
                 url:"saveCourse.do",
@@ -258,8 +323,41 @@
             }).catch(function (err) {
                 alert("保存出错："+err)
             });
+        };
+        var updCourse = function () {
+            console.log(vm02.updCourse.courseStartTime);
+            vm02.updCourse.courseStartTime = new Date(vm02.updCourse.courseStartTime).getTime();
+            vm02.updCourse.courseEndTime = new Date(vm02.updCourse.courseEndTime).getTime();
+            vm02.updCourse.classStartTime = new Date(vm02.updCourse.classStartTime).getTime();
+            vm02.updCourse.classEndTime = new Date(vm02.updCourse.classEndTime).getTime();
+            console.log(vm02.updCourse.courseStartTime);
+            axios({
+                method:"POST",
+                url:"updateCourse.do",
+                data:vm02.updCourse
+            }).then(function (res) {
+                alert(res.data.message);
+                vm02.updCheck();
+                vm01.select();
+//                if(confirm("是否邮件通知已选课的学员？")){
+//                    vm02.sendEmail = true;
+//                    console.log(oldValue);
+//                    console.log(vm02.updCourse);
+//
+//                    vm02.emailNotify.id = vm02.updCourse.id;
+//                }else {
+//                    vm02.updCourse = {};
+//                }
+            }).catch(function (err) {
+                alert("更新出错："+err);
+                vm02.updCourse.courseStartTime = vm01.dateToString(vm02.updCourse.courseStartTime);
+                vm02.updCourse.courseEndTime = vm01.dateToString(vm02.updCourse.courseEndTime);
+                vm02.updCourse.classStartTime = vm01.dateToString(vm02.updCourse.classStartTime);
+                vm02.updCourse.classEndTime = vm01.dateToString(vm02.updCourse.classEndTime);
+            })
         }
     });
+    var oldValue = {};
     var vm01 = new Vue({
         el:'#courseList',
         data:{
@@ -274,7 +372,8 @@
                 pageNo:1,
                 totalPage:1,
             },
-            nowDateTime:new Date()
+            nowDateTime:new Date(),
+            showRadio:false
         },
         methods:{
             select:function () {
@@ -332,6 +431,60 @@
                 }).catch(function (err) {
                     alert("加载出错："+err);
                 });
+            },
+            dateToString:function (value) {
+                var date = new Date(value);
+                Y = date.getFullYear();
+                M = date.getMonth()+1;
+                d = date.getDate();
+                H = date.getHours();
+                m = date.getMinutes();
+                if(M<10){
+                    M = "0"+M;
+                }
+                if(d<10){
+                    d = "0"+d;
+                }
+                if(H<10){
+                    H = "0"+H;
+                }
+                if(m<10){
+                    m = "0"+m;
+                }
+                return Y+"-"+M+"-"+d+"T"+H+":"+m;
+            },
+            updChoose:function (event) {
+                oldValue = {};
+                vm02.changeAble = {course:false,class:false};
+                $('.courseTime').removeAttr("readonly");
+                $('.courseTime').removeAttr("style");
+                $('.classTime').removeAttr("readonly");
+                $('.classTime').removeAttr("style");
+                vm02.updCourse = {};
+                var id = $(event.target).val();
+                console.log(id);
+                var a = {};
+                $.each($(vm01.courses),function (index,element) {
+                    if(element.id == id){
+                        $.extend(a,element);
+                        $.extend(oldValue,element);
+                    }
+                });
+                vm02.updCourse = a;
+                if(this.nowDateTime>=vm02.updCourse.courseStartTime){
+                    $('.courseTime').attr("readonly","readonly");
+                    $('.courseTime').attr("style","background-color: #ddd");
+                    vm02.changeAble.course = true;
+                }
+                if(this.nowDateTime+3600000>=vm02.updCourse.classStartTime){
+                    $('.classTime').attr("readonly","readonly");
+                    $('.classTime').attr("style","background-color: #ddd");
+                    vm02.changeAble.class = true;
+                }
+                vm02.updCourse.courseStartTime = this.dateToString(vm02.updCourse.courseStartTime);
+                vm02.updCourse.courseEndTime = this.dateToString(vm02.updCourse.courseEndTime);
+                vm02.updCourse.classStartTime = this.dateToString(vm02.updCourse.classStartTime);
+                vm02.updCourse.classEndTime = this.dateToString(vm02.updCourse.classEndTime);
             }
         },
         created:function () {
@@ -342,9 +495,15 @@
         el:'#addAndDel',
         data:{
             addCourse:{},
-            upCourse:{},//TODO 和addCourse共用？否则表单和校验都要再写一套
+            updCourse:{},
             showAddForm:false,
-            showUpdateForm:false
+            showUpdateForm:false,
+            changeAble:{
+                course:false,
+                class:false
+            },
+            sendEmail:false,
+            emailNotify:{title:"课程变动通知"}
         },
         methods:{
             delCheck:function () {
@@ -383,6 +542,17 @@
                 $('#delCancelBtn').attr("hidden","hidden");
                 $('.check').attr("hidden","hidden");
                 vm01.checkedCourses = [];
+            },
+            updCheck:function(){
+                this.showUpdateForm = !this.showUpdateForm;
+                this.showAddForm = false;
+                vm01.showRadio = this.showUpdateForm;
+            },
+            sendDo:function () {
+
+            },
+            sendCancel:function () {
+
             }
         }
     });
