@@ -119,7 +119,7 @@
     <div>
         <form id="updateForm" v-show="showUpdateForm">
             <label>课程ID </label><input style="background-color: #ddd" v-model="updCourse.id" name="id" readonly><span style="font-size: 2px;color: #1b2a28;font-style: italic">*课程ID不可更改</span><br/>
-            <label>课程名称 </label><input v-model="updCourse.name" name="name" readonly><br/><span style="font-size: 2px;color: #1b2a28;font-style: italic">*课程名称不可更改</span><br/>
+            <label>课程名称 </label><input style="background-color: #ddd" v-model="updCourse.name" name="name" readonly><span style="font-size: 2px;color: #1b2a28;font-style: italic">*课程名称不可更改</span><br/>
             <label>上课教室 </label><input v-model="updCourse.classRoom" name="classRoom"><br/>
             <label>授课老师 </label><input v-model="updCourse.teacher" name="teacher"><br/>
             <label>选课起止时间 </label><input id="t3" class="courseTime" v-model="updCourse.courseStartTime" type="datetime-local" name="courseStartTime">
@@ -136,8 +136,10 @@
     </div>
     <div class="module">
         <form style="border: 1px;" id="emailForm" v-show="sendEmail">
-            <label>标题</label><input v-model="emailNotify.title"><br/>
-            <label>正文</label><textarea style="height: 400px;width: 600px" v-model="emailNotify.test"></textarea><br/>
+            <label>标题:</label><br/>
+            <input v-model="emailNotify.title"><br/>
+            <label>正文:</label><br/>
+            <textarea style="height: 400px;width: 600px" v-model="emailNotify.test"></textarea><br/>
             <button type="button" @click="sendDo">发送</button>
             <button type="button" @click="sendCancel">取消</button>
         </form>
@@ -356,25 +358,29 @@
                     console.log(a);
                     for(var e in a){
                         if(e+"" == "classRoom"){
-                            vm02.emailNotify.test = vm02.emailNotify.test+"上课教室改为："+a[e];
+                            vm02.emailNotify.test = vm02.emailNotify.test+" \n 上课教室改为："+a[e];
                         }
                         if(e+"" == "teacher"){
-                            vm02.emailNotify.test = vm02.emailNotify.test+"授课老师改为："+a[e];
+                            vm02.emailNotify.test = vm02.emailNotify.test+" \n 授课老师改为："+a[e];
                         }
                         if(e+"" == "courseStartTime"){
-                            vm02.emailNotify.test = vm02.emailNotify.test+"选课开始时间改为："+a[e];
+                            var date = (vm01.dateToString(a[e])).replace("T"," ");
+                            vm02.emailNotify.test = vm02.emailNotify.test+" \n 选课开始时间改为："+date;
                         }
                         if(e+"" == "courseEndTime"){
-                            vm02.emailNotify.test = vm02.emailNotify.test+"选课结束时间改为："+a[e];
+                            var date = (vm01.dateToString(a[e])).replace("T"," ");
+                            vm02.emailNotify.test = vm02.emailNotify.test+" \n 选课结束时间改为："+date;
                         }
                         if(e+"" == "classStartTime"){
-                            vm02.emailNotify.test = vm02.emailNotify.test+"上课开始时间改为："+a[e];
+                            var date = (vm01.dateToString(a[e])).replace("T"," ");
+                            vm02.emailNotify.test = vm02.emailNotify.test+" \n 上课开始时间改为："+date;
                         }
                         if(e+"" == "classEndTime"){
-                            vm02.emailNotify.test = vm02.emailNotify.test+"上课结束时间改为："+a[e];
+                            var date = (vm01.dateToString(a[e])).replace("T"," ");
+                            vm02.emailNotify.test = vm02.emailNotify.test+" \n 上课结束时间改为："+date;
                         }
                         if(e+"" == "score"){
-                            vm02.emailNotify.test = vm02.emailNotify.test+"学分改为："+a[e];
+                            vm02.emailNotify.test = vm02.emailNotify.test+" \n 学分改为："+a[e];
                         }
                     }
                     vm02.emailNotify.id = vm02.updCourse.id;
@@ -582,10 +588,22 @@
                 vm01.showRadio = this.showUpdateForm;
             },
             sendDo:function () {
-
+                console.log(this.emailNotify);
+                axios({
+                    method:"POST",
+                    url:"sendEmail.do",
+                    data:this.emailNotify
+                }).then((res)=>{
+                    alert(res.data.message);
+                    this.emailNotify = {title:"课程变动通知",test:"您好，您所选择的课程发生变动："};
+                    this.sendEmail = false;
+                }).catch((err)=>{
+                    alert("邮件发送出错："+err);
+                })
             },
             sendCancel:function () {
-
+                this.emailNotify = {title:"课程变动通知",test:"您好，您所选择的课程发生变动："};
+                this.sendEmail = false;
             }
         }
     });
