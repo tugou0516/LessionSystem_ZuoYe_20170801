@@ -328,10 +328,10 @@
         };
         var updCourse = function () {
             console.log(vm02.updCourse.courseStartTime);
-            vm02.updCourse.courseStartTime = new Date(vm02.updCourse.courseStartTime).getTime();
-            vm02.updCourse.courseEndTime = new Date(vm02.updCourse.courseEndTime).getTime();
-            vm02.updCourse.classStartTime = new Date(vm02.updCourse.classStartTime).getTime();
-            vm02.updCourse.classEndTime = new Date(vm02.updCourse.classEndTime).getTime();
+            vm02.updCourse.courseStartTime = new Date(vm02.updCourse.courseStartTime).getTime()-28800000;
+            vm02.updCourse.courseEndTime = new Date(vm02.updCourse.courseEndTime).getTime()-28800000;
+            vm02.updCourse.classStartTime = new Date(vm02.updCourse.classStartTime).getTime()-28800000;
+            vm02.updCourse.classEndTime = new Date(vm02.updCourse.classEndTime).getTime()-28800000;
             console.log(vm02.updCourse.courseStartTime);
             axios({
                 method:"POST",
@@ -356,6 +356,7 @@
                         }
                     }
                     console.log(a);
+                    vm02.emailNotify.test = vm02.emailNotify.test+"《"+a.name+"》"+"发生如下变动：";
                     for(var e in a){
                         if(e+"" == "classRoom"){
                             vm02.emailNotify.test = vm02.emailNotify.test+" \n 上课教室改为："+a[e];
@@ -520,10 +521,12 @@
                     $('.classTime').attr("style","background-color: #ddd");
                     vm02.changeAble.class = true;
                 }
+                console.log(vm02.updCourse.courseStartTime);
                 vm02.updCourse.courseStartTime = this.dateToString(vm02.updCourse.courseStartTime);
                 vm02.updCourse.courseEndTime = this.dateToString(vm02.updCourse.courseEndTime);
                 vm02.updCourse.classStartTime = this.dateToString(vm02.updCourse.classStartTime);
                 vm02.updCourse.classEndTime = this.dateToString(vm02.updCourse.classEndTime);
+                console.log(vm02.updCourse.courseStartTime);
             }
         },
         created:function () {
@@ -542,7 +545,7 @@
                 class:false
             },
             sendEmail:false,
-            emailNotify:{title:"课程变动通知",test:"您好，您所选择的课程发生变动："}
+            emailNotify:{title:"课程变动通知",test:"您好，您所选择的课程"}
         },
         methods:{
             delCheck:function () {
